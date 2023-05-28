@@ -54,16 +54,16 @@ if __name__ == "__main__":
     print("Crowder temperature: ",crowder_temperature)
     print("/"*100)
 
-    max_cluster_sizes_allseeds=[]
-    #average_cluster_sizes_allseeds=[]
-    #median_sizes_allseeds=[]
+    
+    #LARGEST CLUSTER SIZE VS TIME ANALYSIS
+    #For largest cluster size vs time, combine all seeds and put them individually on same plot
 
     time_allseeds=[]
     seedlist=[]
+    max_cluster_sizes_allseeds=[]
+    #median_sizes_allseeds=[]
 
     fig,ax=plt.subplots(figsize=(20,15),dpi=100)
-
-    #For largest cluster size vs time, combine all seeds and put them individually on same plot
     
     for filename in sorted(glob.glob(str(os.getcwd())+"/prod_v2.6_newdyn_2023/l"+str(box_length)+"_vfr"+str(volume_fraction_ribosome)+"_vfp"+str(volume_fraction_polysome)+"_Tc"+str(crowder_temperature)+"/gel_l"+str(box_length)+"_vfr"+str(volume_fraction_ribosome)+"_vfp"+str(volume_fraction_polysome)+"_nG"+str(number_gems)+"_nR"+str(number_rods)+"_nL"+str(number_linkers)+"_k0"+str(koff0)+"_koff"+str(koff)+"_repuls"+str(sphere_repulsion)+"_bd"+str(binding_distance)+"_Tc"+str(crowder_temperature)+"_s*dt"+str(dt)+"_gs"+str(gamma_scale)+"_combined.largestclustersizevstime.data"),key=lambda x:(int(((os.path.basename(x).split("_")[12]).split(".")[0]).replace('s','')))):
         seed=int(((os.path.basename(filename).split("_")[12]).split(".")[0]).replace('s',''))
@@ -79,13 +79,11 @@ if __name__ == "__main__":
 
         max_cluster_sizes=max_cluster_size_data[:,1].astype(int)
         print(max_cluster_sizes)
-        #average_cluster_sizes=average_cluster_size_data[:,1]
         #median_size=median(max_cluster_sizes)
 
         ax.plot(time,max_cluster_sizes,marker=None,linestyle='-',linewidth=3.0,label='s = '+str(seed))
 
         max_cluster_sizes_allseeds.append(max_cluster_sizes)
-        #average_cluster_sizes_allseeds.append(average_cluster_sizes)
         #median_sizes_allseeds.append(median_size)
 
         seedlist.append(seed)
@@ -118,3 +116,37 @@ if __name__ == "__main__":
     fig.tight_layout()
     plt.savefig('final_figures/largestclustersize_vs_time/volfracribo'+str(volume_fraction_ribosome)+'_Tc'+str(crowder_temperature)+'_eps'+str(epsilon)+'_largestclustersizevstime.png',bbox_inches='tight')
     plt.close()
+
+
+    #AVERAGE CLUSTER SIZE VS TIME ANALYSIS
+    #For largest cluster size vs time, combine all seeds by averaging them and put the average on the plot with error bars indicating standard deviation.
+
+    time_allseeds=[]
+    seedlist=[]
+    average_cluster_sizes_allseeds=[]
+    
+    fig,ax=plt.subplots(figsize=(20,15),dpi=100)
+
+    for filename in sorted(glob.glob(str(os.getcwd())+"/prod_v2.6_newdyn_2023/l"+str(box_length)+"_vfr"+str(volume_fraction_ribosome)+"_vfp"+str(volume_fraction_polysome)+"_Tc"+str(crowder_temperature)+"/gel_l"+str(box_length)+"_vfr"+str(volume_fraction_ribosome)+"_vfp"+str(volume_fraction_polysome)+"_nG"+str(number_gems)+"_nR"+str(number_rods)+"_nL"+str(number_linkers)+"_k0"+str(koff0)+"_koff"+str(koff)+"_repuls"+str(sphere_repulsion)+"_bd"+str(binding_distance)+"_Tc"+str(crowder_temperature)+"_s*dt"+str(dt)+"_gs"+str(gamma_scale)+"_combined.averageclustersizevstime.data"),key=lambda x:(int(((os.path.basename(x).split("_")[12]).split(".")[0]).replace('s','')))):
+        seed=int(((os.path.basename(filename).split("_")[12]).split(".")[0]).replace('s',''))
+        print("*"*100)
+        print("Seed: ",seed)
+
+        average_cluster_size_data=np.load(filename,allow_pickle=True)
+
+        timesteps = average_cluster_size_data[:,0]
+        step_time=7.5e-2
+        time=timesteps*(step_time/1e6)
+        time_allseeds.append(time)
+
+        average_cluster_sizes=average_cluster_size_data[:,1].astype(int)
+        print(average_cluster_sizes)
+
+        average_cluster_sizes_allseeds.append(average_cluster_sizes)
+
+        seedlist.append(seed)
+
+
+
+
+
