@@ -21,8 +21,7 @@ echo "Running in dir: $PWD"
 outdir=$(dirname $outprefix)
 mkdir -p $outdir
 
-#exe=multivalent_dynbond_v2.6_soft_brownian.py
-exe=multivalent_dynbond_v2.65_soft_langevin_compress.py
+exe=get_binding_constant_v2.3.py
 full_outprefix=$(readlink -f $outprefix)
 
 #module purge
