@@ -67,7 +67,7 @@ def cluster_size_v_time(trajectory,minframe=0,frameinterval=1,verbose=False):
     numberofclusters_with_time=[]
     average_clustersize_with_time=[]
     
-    for frame in frames_list[::]:
+    for frame in frames_list[::]:  #skipping no frames at all
         system=trajectory[int(frame)]
 
         cluster_bondtable,bodies = get_bond_table(trajectory,frame_id=int(frame))
@@ -83,7 +83,7 @@ def cluster_size_v_time(trajectory,minframe=0,frameinterval=1,verbose=False):
         numberofclusters_with_time.append(len(clustering))
         timestep_list.append(system.configuration.step)
         cluster_sizes=sorted([len(c) for c in clustering],reverse=True)
-        cluster_sizes.extend(singleton_clusters)
+        cluster_sizes.extend(singleton_clusters)  #add singletons to the list of cluster sizes too
 
         if len(cluster_sizes)>0:
             largest_cluster_size=cluster_sizes[0]
@@ -144,13 +144,23 @@ if __name__ == "__main__":
         print('Total number of frames:',len(trajectory))
 
     max_cluster_size_data,average_cluster_size_data  = cluster_size_v_time(trajectory,minframe,frameinterval,verbose)
+
+
+    largestclustersize_file=os.path.splitext(trajectory_file)[0]+'.largestclustersizevstime.data'
+    averageclustersize_file=os.path.splitext(trajectory_file)[0]+'.averageclustersizevstime.data'
+
+    max_cluster_size_data.dump(largestclustersize_file)
+    average_cluster_size_data.dump(averageclustersize_file)
     
+
+    """
     max_cluster_sizes=max_cluster_size_data[:,1]
     average_cluster_sizes=average_cluster_size_data[:,1]
 
     timesteps=max_cluster_size_data[:,0]
     step_time=7.5e-2
     time=timesteps*(step_time/1e6)
+    """
 
 
     """   
