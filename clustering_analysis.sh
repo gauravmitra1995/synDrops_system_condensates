@@ -33,7 +33,7 @@ shift
 crowder_temperature=$1
 shift
 
-binding_distance=$1
+min_cluster_size=$1
 shift
 
 dt=0.002
@@ -41,6 +41,7 @@ ng=20
 koff0=0
 gamma_scale=0.001
 sphere_repulsion=500
+binding_distance=1.0
 
 current_dir=$(pwd)
 
@@ -48,8 +49,16 @@ current_dir=$(pwd)
 
 for seed in `seq 1 5`;do 
 
-      trajectory_file=${current_dir}/prod_v2.6_newdyn_2023/l${box_length}_vfr${vfr}_vfp${vfp}_Tc${crowder_temperature}/gel_l${box_length}_vfr${vfr}_vfp${vfp}_nG${ng}_nR${nr}_nL${nl}_k0${koff0}_koff${koff}_repuls${sphere_repulsion}_bd${binding_distance}_Tc${crowder_temperature}_s${seed}_dt${dt}_gs${gamma_scale}_combined.gsd
+      trajectory_file=/scratch/work/hockygroup/gm2535/prod_v2.6_newdyn_2023/l${box_length}_vfr${vfr}_vfp${vfp}_Tc${crowder_temperature}/gel_l${box_length}_vfr${vfr}_vfp${vfp}_nG${ng}_nR${nr}_nL${nl}_k0${koff0}_koff${koff}_repuls${sphere_repulsion}_bd${binding_distance}_Tc${crowder_temperature}_s${seed}_dt${dt}_gs${gamma_scale}_combined.gsd
 
-      python -u clustering_using_bondtable_2023_v2.py --trajectory_file $trajectory_file --verbose 
+
+      if (( $(echo "$vfr > 0.35" |bc -l) ));then
+
+         trajectory_file=/scratch/work/hockygroup/gm2535/prod_v2.6_newdyn_2023/l${box_length}_vfr${vfr}_vfp${vfp}_Tc${crowder_temperature}/gel_l${box_length}_ls1400_vfr${vfr}_vfp${vfp}_nG${ng}_nR${nr}_nL${nl}_k0${koff0}_koff${koff}_repuls${sphere_repulsion}_bd${binding_distance}_Tc${crowder_temperature}_s${seed}_dt${dt}_combined.gsd
+
+      fi
+
+
+      python -u clustering_using_bondtable_2023_v2.py --trajectory_file $trajectory_file --verbose --min_cluster_size $min_cluster_size
 
 done

@@ -52,6 +52,12 @@ def find_singletons(combined_list,all_bodies):
     missing_elements = setbigger - setsmaller
     return list(missing_elements)
 
+def remove_from_list(cluster_sizes,min_cluster_size):
+    res=[]
+    for c in cluster_sizes:
+        if(c>=min_cluster_size):
+            res.append(c)
+    return res
 
 def cluster_size_v_time(trajectory,minframe=0,frameinterval=1,verbose=False):
     
@@ -63,9 +69,11 @@ def cluster_size_v_time(trajectory,minframe=0,frameinterval=1,verbose=False):
     timestep_list=[]
     
     largest_clusters_with_time=[]
-    second_largest_clusters_with_time=[]
+    #second_largest_clusters_with_time=[]
     numberofclusters_with_time=[]
     average_clustersize_with_time=[]
+
+    print("Minimum cluster size: ",min_cluster_size)
     
     for frame in frames_list[::]:  #skipping no frames at all
         system=trajectory[int(frame)]
@@ -83,22 +91,30 @@ def cluster_size_v_time(trajectory,minframe=0,frameinterval=1,verbose=False):
         numberofclusters_with_time.append(len(clustering))
         timestep_list.append(system.configuration.step)
         cluster_sizes=sorted([len(c) for c in clustering],reverse=True)
-        cluster_sizes.extend(singleton_clusters)  #add singletons to the list of cluster sizes too
+        
+
+        if(min_cluster_size==1):
+            cluster_sizes.extend(singleton_clusters)  #add singletons to the list of cluster sizes too only if minimum cluster size chosen is 1 
+        else:
+            cluster_sizes_modified=remove_from_list(cluster_sizes,min_cluster_size)  #remove those cluster sizes which are less than the chosen minimum cluster size
+            cluster_sizes=cluster_sizes_modified
 
         if len(cluster_sizes)>0:
             largest_cluster_size=cluster_sizes[0]
-            if(len(cluster_sizes)>1):
-                second_largest_cluster_size=cluster_sizes[1]
-            else:
-                second_largest_cluster_size=0
+            
+            #if(len(cluster_sizes)>1):
+                #second_largest_cluster_size=cluster_sizes[1]
+            #else:
+                #second_largest_cluster_size=0
+            
             average_cluster_size=np.round(np.mean(cluster_sizes),5)
         else:
             largest_cluster_size = 0 
-            second_largest_cluster_size=0
+            #second_largest_cluster_size=0
             average_cluster_size=0
 
         largest_clusters_with_time.append(largest_cluster_size)
-        second_largest_clusters_with_time.append(second_largest_cluster_size)
+        #second_largest_clusters_with_time.append(second_largest_cluster_size)
         average_clustersize_with_time.append(average_cluster_size)
 
         if verbose:
@@ -110,6 +126,7 @@ def cluster_size_v_time(trajectory,minframe=0,frameinterval=1,verbose=False):
             print("Largest cluster size:",largest_cluster_size)
             print("Average cluster size:",average_cluster_size)
             #print("Second largest cluster size:",second_largest_cluster_size)
+        
         
     
     largest_clusters_with_time = np.array(largest_clusters_with_time).reshape(-1,1)
@@ -125,12 +142,12 @@ def cluster_size_v_time(trajectory,minframe=0,frameinterval=1,verbose=False):
 
     return max_cluster_size_data,average_cluster_size_data
     
-    
 
 if __name__ == "__main__":
     import argparse
     parser=argparse.ArgumentParser()
-    parser.add_argument("--trajectory_file",type=str)
+    parser.add_argument("--trajectory_file",type=str,required=True)
+    parser.add_argument("--min_cluster_size",type=int,required=True)
     parser.add_argument("--minframe",default=0,type=int)
     parser.add_argument("--frameinterval",default=1,type=int)
     parser.add_argument('--verbose',default=False,action='store_true')
@@ -145,68 +162,11 @@ if __name__ == "__main__":
 
     max_cluster_size_data,average_cluster_size_data  = cluster_size_v_time(trajectory,minframe,frameinterval,verbose)
 
-
-    largestclustersize_file=os.path.splitext(trajectory_file)[0]+'.largestclustersizevstime.data'
-    averageclustersize_file=os.path.splitext(trajectory_file)[0]+'.averageclustersizevstime.data'
+    largestclustersize_file='./largestclustersizevstime_data/'+os.path.splitext(os.path.basename(trajectory_file))[0]+'.largestclustersizevstime.data'
+    averageclustersize_file='./averageclustersizevstime_data/'+os.path.splitext(os.path.basename(trajectory_file))[0]+'.averageclustersizevstime_minclustersize'+str(min_cluster_size)+'.data'
 
     max_cluster_size_data.dump(largestclustersize_file)
     average_cluster_size_data.dump(averageclustersize_file)
     
-
-    """
-    max_cluster_sizes=max_cluster_size_data[:,1]
-    average_cluster_sizes=average_cluster_size_data[:,1]
-
-    timesteps=max_cluster_size_data[:,0]
-    step_time=7.5e-2
-    time=timesteps*(step_time/1e6)
-    """
-
-
-    """   
-    fig,ax=plt.subplots(figsize=(22,15),dpi=100)
-
-    #Linear fitting the log scale graph (check power law index)
-
-    nucleation_time_guess = 0.5
-
-    coef = np.polyfit(np.log10(time),np.log10(average_cluster_sizes),1)
-    poly1d_fn = np.poly1d(coef) # poly1d_fn is now a function which takes in x and returns an estimate for y
-    cluster_time_fit = [pow(10,i) for i in poly1d_fn(np.log10(time))]
-    ax.plot(time,average_cluster_sizes,linewidth=5.0,color='blue')
-    ax.plot(time,cluster_time_fit,'--r',label=f'Total: Exponent $\\alpha$={round(coef[0], 2)}')
-
-    first_select = np.where(time < nucleation_time_guess)[0]
-
-    coef = np.polyfit(np.log10(time[first_select]),np.log10(average_cluster_sizes[first_select]),1)
-    poly1d_fn = np.poly1d(coef)
-    cluster_time_fit = [pow(10,i) for i in poly1d_fn(np.log10(time))]
-    ax.plot(time,cluster_time_fit,'--g',label=f'First: Exponent $\\alpha$={round(coef[0], 2)}')
-
-    #Make the plots
-
-    #ax.plot(time,max_cluster_sizes,marker='o',linewidth=5.0,markersize=10.0,color='blue')
-
-    ax.set_ylabel('Average Cluster size',fontsize=60)
-    #ax.set_ylabel('Largest Cluster size',fontsize=60)
-    ax.set_xlabel('Time (in sec)',fontsize=60)
-
-    for axis in ['top','bottom','left','right']:
-        ax.spines[axis].set_linewidth(5)
-    ax.legend(loc='upper left',ncol=1,prop={'size': 40})
-    plt.xticks(fontsize=50)
-    plt.yticks(fontsize=50)
-    plt.yscale('log')
-    plt.xscale('log')
-    fig.tight_layout()
-    plt.show()
-    plt.close()
-    """
     
-    
-    
-
-
-        
-
 

@@ -1,17 +1,19 @@
 box_length=860
 nr=1170
 nl=390
-binding_distance=1.0
 
-#for vfr_vfp in 0.0_0 0.15_0 0.2_0 0.25_0 0.3_0 0.35_0 0.4_0 0.5_0;do
+#for vfr_vfp in 0.0_0 0.15_0 0.2_0 0.3_0 0.35_0;do
 for vfr_vfp in 0.3_0;do
+#for vfr_vfp in 0.4_0 0.5_0;do
     #for koff in 0.001 0.0003 0.0001;do  #JUST DOING LOWEST EPSILON FOR THE MAIN TEXT FIGURES FIRST
     for koff in 0.001;do
         vfr=$(echo $vfr_vfp |cut -f 1 -d '_')
         vfp=$(echo $vfr_vfp |cut -f 2 -d '_')
-	#for crowder_temperature in 1.0;do
-	for crowder_temperature in 0.5 2.0;do
-             bash combine_seeds_and_plot.sh $box_length $vfr $vfp $nr $nl $koff $crowder_temperature $binding_distance
+        #for crowder_temperature in 1.0;do
+        for crowder_temperature in 0.5 1.1 1.2 2.0;do
+             for min_cluster_size in 1 2 3;do
+                 bash combine_seeds_and_plot.sh $box_length $vfr $vfp $nr $nl $koff $crowder_temperature $min_cluster_size
+             done
         done
     done
 done
