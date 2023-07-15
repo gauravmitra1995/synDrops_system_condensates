@@ -55,7 +55,7 @@ if __name__ == "__main__":
     print("Crowder temperature: ",crowder_temperature)
     print("/"*100)
 
-    '''        
+    
     #LARGEST CLUSTER SIZE VS TIME ANALYSIS
     #For largest cluster size vs time, combine all seeds and put them individually on same plot
 
@@ -130,7 +130,7 @@ if __name__ == "__main__":
     plt.savefig('final_figures/largestclustersize_vs_time/volfracribo'+str(volume_fraction_ribosome)+'_Tc'+str(crowder_temperature)+'_eps'+str(epsilon)+'_largestclustersizevstime.svg',bbox_inches='tight')
     plt.close()
 
-    '''
+    sys.exit(0)
     
 
     
@@ -225,6 +225,7 @@ if __name__ == "__main__":
     fig.tight_layout()
     plt.savefig('final_figures/averageclustersize_vs_time/volfracribo'+str(volume_fraction_ribosome)+'_Tc'+str(crowder_temperature)+'_eps'+str(epsilon)+'_averageclustersizevstime_minclustersize'+str(min_cluster_size)+'.svg',bbox_inches='tight')
     plt.close()
+    
     
 
     
