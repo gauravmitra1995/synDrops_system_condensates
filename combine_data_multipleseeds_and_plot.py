@@ -9,6 +9,18 @@ from gsd import hoomd as gsd
 import random
 from collections import defaultdict
 from statistics import median
+from functions_cluster_analysis import *
+from matplotlib.lines import Line2D
+
+# Function to group diffusivity data for a given cluster size
+def group_diffusivity_data(cluster_size,diffusivity_data):
+    diffusivity_values = []
+    
+    for seed_data in diffusivity_data.values():
+        if cluster_size in seed_data:
+            diffusivity_values.append(seed_data[cluster_size])
+    
+    return diffusivity_values
 
 
 if __name__ == "__main__":
@@ -20,6 +32,7 @@ if __name__ == "__main__":
     parser.add_argument("--volume_fraction_ribosome",help="Fraction of volume taken up by 30nm ribosome (default: %(default)s)",default=0,type=float,required=True)
     parser.add_argument("--koff",help="Off rate for unbinding in time units (default: %(default)s)",default=0.001,type=float,required=True)
     parser.add_argument("--min_cluster_size",help="Minimum cluster size to be considered",default=1,type=int,required=True)
+    #parser.add_argument("--cutoff_frames",help="Cut off value for the frames upto which analysis has to be done",default=2400,type=int,required=True)
     
     #Parameters which were more or less fixed 
     parser.add_argument("--volume_fraction_polysome",help="Fraction of volume taken up by 100nm polysome (default: %(default)s)",default=0,type=int)
@@ -55,7 +68,7 @@ if __name__ == "__main__":
     print("Crowder temperature: ",crowder_temperature)
     print("/"*100)
 
-    
+    ''' 
     #LARGEST CLUSTER SIZE VS TIME ANALYSIS
     #For largest cluster size vs time, combine all seeds and put them individually on same plot
 
@@ -66,8 +79,8 @@ if __name__ == "__main__":
 
     fig,ax=plt.subplots(figsize=(20,15),dpi=100)
 
-
     cutoff_frames=2400
+
     for filename in sorted(glob.glob("./largestclustersizevstime_data/gel_l"+str(box_length)+"_vfr"+str(volume_fraction_ribosome)+"_vfp"+str(volume_fraction_polysome)+"_nG"+str(number_gems)+"_nR"+str(number_rods)+"_nL"+str(number_linkers)+"_k0"+str(koff0)+"_koff"+str(koff)+"_repuls"+str(sphere_repulsion)+"_bd"+str(binding_distance)+"_Tc"+str(crowder_temperature)+"_s*dt"+str(dt)+"_gs"+str(gamma_scale)+"_combined.largestclustersizevstime.data"),key=lambda x:(int(((os.path.basename(x).split("_")[12]).split(".")[0]).replace('s','')))):
         seed=int(((os.path.basename(filename).split("_")[12]).split(".")[0]).replace('s',''))
         print("*"*100)
@@ -98,6 +111,7 @@ if __name__ == "__main__":
         #median_sizes_allseeds.append(median_size)
 
         seedlist.append(seed)
+    
 
     """
     median_cluster_size = [median(frame) for frame in zip(*max_cluster_sizes_allseeds)]
@@ -129,8 +143,6 @@ if __name__ == "__main__":
     fig.tight_layout()
     plt.savefig('final_figures/largestclustersize_vs_time/volfracribo'+str(volume_fraction_ribosome)+'_Tc'+str(crowder_temperature)+'_eps'+str(epsilon)+'_largestclustersizevstime.svg',bbox_inches='tight')
     plt.close()
-
-    sys.exit(0)
     
 
     
@@ -142,8 +154,6 @@ if __name__ == "__main__":
     average_cluster_sizes_allseeds=[]
     
     fig,ax=plt.subplots(figsize=(20,15),dpi=100)
-
-    cutoff_frames=2400
 
     for filename in sorted(glob.glob("./averageclustersizevstime_data/gel_l"+str(box_length)+"_vfr"+str(volume_fraction_ribosome)+"_vfp"+str(volume_fraction_polysome)+"_nG"+str(number_gems)+"_nR"+str(number_rods)+"_nL"+str(number_linkers)+"_k0"+str(koff0)+"_koff"+str(koff)+"_repuls"+str(sphere_repulsion)+"_bd"+str(binding_distance)+"_Tc"+str(crowder_temperature)+"_s*dt"+str(dt)+"_gs"+str(gamma_scale)+"_combined.averageclustersizevstime_minclustersize"+str(min_cluster_size)+".data"),key=lambda x:(int(((os.path.basename(x).split("_")[12]).split(".")[0]).replace('s','')))):
         seed=int(((os.path.basename(filename).split("_")[12]).split(".")[0]).replace('s',''))
@@ -225,10 +235,137 @@ if __name__ == "__main__":
     fig.tight_layout()
     plt.savefig('final_figures/averageclustersize_vs_time/volfracribo'+str(volume_fraction_ribosome)+'_Tc'+str(crowder_temperature)+'_eps'+str(epsilon)+'_averageclustersizevstime_minclustersize'+str(min_cluster_size)+'.svg',bbox_inches='tight')
     plt.close()
+    '''
     
     
 
+
+    #AVG DIFFUSIVITY VS CLUSTER SIZE ANALYSIS
+    #For the scatter plot, combine all seeds and put them individually on same plot. For the line plot, do an averaging over the seeds
+
+    seedlist=[]
+    diffusivities_allseeds=[]
+    clustersizes_allseeds=[]
+
+    #cmap = plt.cm.get_cmap('jet')
+    fig, ax = plt.subplots(1,1, figsize=(8,6),dpi=300)
+    ax.set_xscale('log')
+    ax.set_yscale('log')
+
+    num_frames_analysis=[]
+
+    for filename in sorted(glob.glob("./diffusivity_data/skip1frames/gel_l"+str(box_length)+"_vfr"+str(volume_fraction_ribosome)+"_vfp"+str(volume_fraction_polysome)+"_nG"+str(number_gems)+"_nR"+str(number_rods)+"_nL"+str(number_linkers)+"_k0"+str(koff0)+"_koff"+str(koff)+"_repuls"+str(sphere_repulsion)+"_bd"+str(binding_distance)+"_Tc"+str(crowder_temperature)+"_s*dt"+str(dt)+"_gs"+str(gamma_scale)+"_combined.diffusivityvsclustersize_minclustersize"+str(min_cluster_size)+".scatterplot.data"),key=lambda x:(int(((os.path.basename(x).split("_")[12]).split(".")[0]).replace('s','')))):
+        seed=int(((os.path.basename(filename).split("_")[12]).split(".")[0]).replace('s',''))
+        print("*"*100)
+        print("Seed: ",seed)
+        diffusivity_scatterplotdata=np.load(filename,allow_pickle=True)
+        clustersizes=diffusivity_scatterplotdata[0]
+        diffusivities=diffusivity_scatterplotdata[1]
+        clustersizes_allseeds.append(list(clustersizes))
+        diffusivities_allseeds.append(list(diffusivities))
+        print("No of frames:")
+        print(len(list(clustersizes)))
+        print("Minimum and maximum clustersizes: ")
+        print(min(flat_list(list(clustersizes))),max(flat_list(list(clustersizes))))
+        print("Minimum and maximum mean diffusivities: ")
+        print(min(flat_list(list(diffusivities))),max(flat_list(list(diffusivities))))
+
+        if(len(list(clustersizes))==len(list(diffusivities))):
+            num_frames_analysis.append(len(list(clustersizes)))
+
+        seedlist.append(seed)
+
+    num_frames=min(num_frames_analysis)
+
+    meandiffusivities_allseeds=[]
+    stddiffusivities_allseeds=[]
+    clustersizespresent_allseeds=[]
+
+    meandiffusivity_dict_allseeds={}
+    stddiffusivity_dict_allseeds={}
+
+    for filename in sorted(glob.glob("./diffusivity_data/skip1frames/gel_l"+str(box_length)+"_vfr"+str(volume_fraction_ribosome)+"_vfp"+str(volume_fraction_polysome)+"_nG"+str(number_gems)+"_nR"+str(number_rods)+"_nL"+str(number_linkers)+"_k0"+str(koff0)+"_koff"+str(koff)+"_repuls"+str(sphere_repulsion)+"_bd"+str(binding_distance)+"_Tc"+str(crowder_temperature)+"_s*dt"+str(dt)+"_gs"+str(gamma_scale)+"_combined.diffusivityvsclustersize_minclustersize"+str(min_cluster_size)+".lineplot.data"),key=lambda x:(int(((os.path.basename(x).split("_")[12]).split(".")[0]).replace('s','')))):
+        seed=int(((os.path.basename(filename).split("_")[12]).split(".")[0]).replace('s',''))
+        #print("*"*100)
+        #print("Seed: ",seed)
+
+        diffusivity_lineplotdata=np.load(filename,allow_pickle=True)
+        clustersizespresent=diffusivity_lineplotdata[0]
+        clustersizespresent_allseeds.append(list(clustersizespresent))
+        seedlist.append(seed)
+
+        meandiffusivity_dict={}
+        stddiffusivity_dict={}
+        for c in clustersizespresent:
+            meandiffusivity_dict[c]=diffusivity_lineplotdata[1][list(clustersizespresent).index(c)]
+            stddiffusivity_dict[c]=diffusivity_lineplotdata[2][list(clustersizespresent).index(c)]
+
+        meandiffusivity_dict_allseeds[seed]=meandiffusivity_dict
+        stddiffusivity_dict_allseeds[seed]=stddiffusivity_dict
+        
+
+    maxclustersize_of_seeds=np.max(flat_list(clustersizespresent_allseeds))
+    all_possible_cluster_sizes=np.arange(1,maxclustersize_of_seeds+1,1)
+
+    allowed_possible_cluster_sizes=[]
+    meandiffusivities_eachallowedclustersize_allseedscombined={}
+    stddiffusivities_eachallowedclustersize_allseedscombined={}
+
+    for size in all_possible_cluster_sizes:
+        selected_cluster_size = size
+        grouped_meandiffusivity_data = group_diffusivity_data(selected_cluster_size,meandiffusivity_dict_allseeds)
+        # Print the grouped diffusivity data
+        if(grouped_meandiffusivity_data==[]):
+            print(f"Mean Diffusivity data for cluster size {selected_cluster_size}:")
+            print(grouped_meandiffusivity_data)
+        else:
+            allowed_possible_cluster_sizes.append(size)
+            meandiffusivities_eachallowedclustersize_allseedscombined[size]=np.mean(grouped_meandiffusivity_data,axis=0)
+            stddiffusivities_eachallowedclustersize_allseedscombined[size]=np.std(grouped_meandiffusivity_data,axis=0)
+    '''
+    print("Minimum mean: ",min(list(meandiffusivities_eachallowedclustersize_allseedscombined.values())))
+    print("Maximum mean: ",max(list(meandiffusivities_eachallowedclustersize_allseedscombined.values())))
+
+    print("Minimum SD: ",min(list(stddiffusivities_eachallowedclustersize_allseedscombined.values())))
+    print("Maximum SD: ",max(list(stddiffusivities_eachallowedclustersize_allseedscombined.values())))
+    '''
+
+    #Line plot with error bars
+    plt.errorbar(allowed_possible_cluster_sizes,list(meandiffusivities_eachallowedclustersize_allseedscombined.values()), yerr = list(stddiffusivities_eachallowedclustersize_allseedscombined.values()), xerr = None,color='black',linewidth=0.4,elinewidth=0.3,capsize=1.4,ecolor='black',capthick=0.2)
+
+    colors=['#1f77b4','#ff7f0e','#2ca02c','#d62728','#9467bd']
+    legend_labels = ['s = 1','s = 2','s = 3', 's = 4', 's = 5']
+    custom_handles = [Line2D([], [], marker='o',markersize=5,linestyle='None',color=color, label=label) for color, label in zip(colors, legend_labels)]
+
+    #Scatter plot containing information for all the seeds (in different colors) 
+    r=0
+
+    for k in range(len(clustersizes_allseeds)):
+        c=colors[r] 
+        for i in range(num_frames):  
+            sc = ax.scatter(np.array(clustersizes_allseeds[k][i]),np.array(diffusivities_allseeds[k][i]),s=0.2,marker='o',color=c)
+        r+=1
     
+    for axis in ['top','bottom','left','right']:
+        ax.spines[axis].set_linewidth(1)
+
+    #ax.xaxis.set_tick_params(labelbottom=False)
+    #ax.yaxis.set_tick_params(labelleft=False)
+
+    ax.set_xlabel('Cluster size (#molecules)')
+    ax.set_ylabel(r'Avg. diffusivity ($\mu m^2/s$)')
+    ax.legend(loc='lower right',ncol=1,handles=custom_handles,prop={'size': 10})
+    plt.title(r'$\phi_{ribosome} = $'+str(volume_fraction_ribosome)+' ; '+r'$T_{c} = $'+str(crowder_temperature)+' ; '+r'$\varepsilon = $'+str(epsilon))
+
+    ax.set_xlim(0.8,1600)
+    ax.set_ylim(1e-6,100)
+    fig.tight_layout()
+    plt.show()
+    plt.close()
+
+
+    #plt.savefig('final_figures/diffusivity_vs_clustersize/volfracribo'+str(volume_fraction_ribosome)+'_Tc'+str(crowder_temperature)+'_eps'+str(epsilon)+'_diffusivityvsclustersize_skipevery5frames.png',bbox_inches='tight')
+    #plt.savefig('final_figures/diffusivity_vs_clustersize/volfracribo'+str(volume_fraction_ribosome)+'_Tc'+str(crowder_temperature)+'_eps'+str(epsilon)+'_diffusivityvsclustersize_withticklabels_skipevery5frames.png',bbox_inches='tight')
     
 
 

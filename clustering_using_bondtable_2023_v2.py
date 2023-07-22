@@ -118,7 +118,7 @@ def cluster_size_v_time(trajectory,minframe=0,frameinterval=1,verbose=False):
         average_clustersize_with_time.append(average_cluster_size)
 
         if verbose:
-            print("*"*80)
+            print("*"*100)
             print("Frame:",frame)
             print("No of clusters:",len(cluster_sizes))
             print(cluster_sizes)
@@ -161,13 +161,13 @@ if __name__ == "__main__":
         print('Total number of frames:',len(trajectory))
 
     max_cluster_size_data,average_cluster_size_data  = cluster_size_v_time(trajectory,minframe,frameinterval,verbose)
-    '''
+    
     largestclustersize_file='./largestclustersizevstime_data/'+os.path.splitext(os.path.basename(trajectory_file))[0]+'.largestclustersizevstime.data'
-    averageclustersize_file='./averageclustersizevstime_data/'+os.path.splitext(os.path.basename(trajectory_file))[0]+'.averageclustersizevstime_minclustersize'+str(min_cluster_size)+'.data'
+    #averageclustersize_file='./averageclustersizevstime_data/'+os.path.splitext(os.path.basename(trajectory_file))[0]+'.averageclustersizevstime_minclustersize'+str(min_cluster_size)+'.data'
 
     max_cluster_size_data.dump(largestclustersize_file)
-    average_cluster_size_data.dump(averageclustersize_file)
-    '''
+    #average_cluster_size_data.dump(averageclustersize_file)
+    
     
     
 

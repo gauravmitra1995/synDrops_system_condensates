@@ -97,7 +97,7 @@ def group_elements_basedonalist(elements1,elements2):
     return grouped_elements
 
 
-def get_trajectoryinfo_vs_time(trajectory,minframe=0,frameinterval=1,verbose=False,step_time=7.5e-2):
+def get_trajectoryinfo_vs_time(trajectory,cutoff_frames,minframe,frameinterval,verbose=False,step_time=7.5e-2):
     
     num_frames=len(trajectory)
     maxframe=num_frames-1
@@ -119,18 +119,31 @@ def get_trajectoryinfo_vs_time(trajectory,minframe=0,frameinterval=1,verbose=Fal
 
     print("Delta time in seconds: ",deltaT_seconds)
     print("Minimum cluster size: ",min_cluster_size)
+    print("Cut off frames for analysis: ",cutoff_frames)
+    print("Frame interval: ",frameinterval)
+
+    frames_list=[f for f in frames_list if f<(cutoff_frames+1)]
+
+    #print(np.array(frames_list))
+    print("No of frames for analysis: ",len(frames_list))
 
     mean_diffusivities_allframes=[]
     std_diffusivities_allframes=[]
     cluster_sizes_allframes=[]
 
     nucleation_time_guess = 0.5
-    cmap = plt.cm.get_cmap('jet')
+    
+    #cmap = plt.cm.get_cmap('jet')
+    '''
     fig, ax = plt.subplots(1,1, figsize=(6,4),dpi=400)
     ax.set_xscale('log')
     ax.set_yscale('log')
+    '''
 
-    for frame in frames_list:
+    largestclustersizes=[]
+    
+
+    for frame in frames_list:   #doing analysis only upto cutoff frames
         system=trajectory[int(frame)]
         step=system.configuration.step
 
@@ -178,7 +191,8 @@ def get_trajectoryinfo_vs_time(trajectory,minframe=0,frameinterval=1,verbose=Fal
             #print("Frame:",frame)
             clustering_modified=[[s] for s in singletons]+clustering
             clustering=clustering_modified
-            #print(clustering)
+            #print(cluster_sizes)
+            largestclustersizes.append(max(cluster_sizes))
             
         diffusivities_allclusters=[]
         for clus in clustering:
@@ -187,6 +201,7 @@ def get_trajectoryinfo_vs_time(trajectory,minframe=0,frameinterval=1,verbose=Fal
                 diff=diffusivity[a]
                 diffusivities_eachcluster.append(diff)
             diffusivities_allclusters.append(diffusivities_eachcluster)
+
         
         mean_diffusivities=[]
         std_diffusivities=[]
@@ -196,11 +211,14 @@ def get_trajectoryinfo_vs_time(trajectory,minframe=0,frameinterval=1,verbose=Fal
             mean_diffusivities.append(mean_d)
             std_diffusivities.append(std_d)
 
+        #print(min(cluster_sizes),max(cluster_sizes))
+        #print(min(mean_diffusivities),max(mean_diffusivities))
+
         cluster_sizes_allframes.append(cluster_sizes)
         mean_diffusivities_allframes.append(mean_diffusivities)            
         std_diffusivities_allframes.append(std_diffusivities)
 
-    timestep_list = np.array(timestep_list).reshape(-1,1)
+    #Join the data for all frames together into one big list
     
     cluster_sizes_allcombined=[]
     mean_diffusivities_allcombined=[]
@@ -212,12 +230,18 @@ def get_trajectoryinfo_vs_time(trajectory,minframe=0,frameinterval=1,verbose=Fal
     cluster_sizes_allcombined=flat_list(cluster_sizes_allcombined)
     mean_diffusivities_allcombined=flat_list(mean_diffusivities_allcombined)
 
+    #print(min(mean_diffusivities_allcombined),max(mean_diffusivities_allcombined))
+
+    #Grouping by cluster size for the line plot 
+
     cluster_sizes_allcombined_sorted=sorted(cluster_sizes_allcombined)
     mean_diffusivities_allcombined_sorted = [md for _, md in sorted(zip(cluster_sizes_allcombined, mean_diffusivities_allcombined))]
 
     grouped_cluster_sizes_allcombined_sorted = group_elements(cluster_sizes_allcombined_sorted)
-
     grouped_mean_diffusivities_allcombined_sorted = group_elements_basedonalist(cluster_sizes_allcombined_sorted,mean_diffusivities_allcombined_sorted)
+
+    #print(len(grouped_cluster_sizes_allcombined_sorted))
+    #print(len(grouped_mean_diffusivities_allcombined_sorted))
 
     mean_diffusivities_allcombined_sorted_eachclustersize=[]
     std_diffusivities_allcombined_sorted_eachclustersize=[]    
@@ -236,23 +260,29 @@ def get_trajectoryinfo_vs_time(trajectory,minframe=0,frameinterval=1,verbose=Fal
         std_diffusivities_allcombined_sorted_eachclustersize.append(std_value)
 
         index+=1
-    
+
+    #print(cluster_sizes_present)
+    #print("Length of list of cluster sizes present:")
+    #print(len(cluster_sizes_present))
+    #print(min(mean_diffusivities_allcombined_sorted_eachclustersize),max(mean_diffusivities_allcombined_sorted_eachclustersize))
+
+    '''
     for i in range(len(time_list)): 
         #sc = ax.scatter(np.array(cluster_sizes_allframes[i]),np.array(mean_diffusivities_allframes[i]),s=1,c=np.full(len(cluster_sizes_allframes[i]),np.array(time_list[i])),cmap=cmap)
         sc = ax.scatter(np.array(cluster_sizes_allframes[i]),np.array(mean_diffusivities_allframes[i]),s=0.7,color='grey')
 
-
-    plt.errorbar(cluster_sizes_present,mean_diffusivities_allcombined_sorted_eachclustersize, yerr = std_diffusivities_allcombined_sorted_eachclustersize, xerr = None)
+    plt.errorbar(cluster_sizes_present,mean_diffusivities_allcombined_sorted_eachclustersize, yerr = std_diffusivities_allcombined_sorted_eachclustersize, xerr = None,color='black',linewidth=0.4,elinewidth=0.3,capsize=1.4,ecolor='black',capthick=0.2)
     #plt.yscale('symlog')
     ax.set_xlabel('Cluster size (#molecules)')
     ax.set_ylabel(r'Avg. diffusivity ($\mu m^2/s$)')
-    #cbar = plt.colorbar(sc,extend='neither')
-    #sc.set_clim(vmin=min(time_list),vmax=max(time_list))
-    #cbar.set_label('time (s)', fontsize=14)
-    ax.set_ylim(1e-5,10)
+    plt.title('Frame interval: '+str(frameinterval))
+    #ax.set_ylim(1e-5,10)
 
     plt.show()
     plt.close()
+    '''
+    
+    return cluster_sizes_allframes,mean_diffusivities_allframes,cluster_sizes_present,mean_diffusivities_allcombined_sorted_eachclustersize,std_diffusivities_allcombined_sorted_eachclustersize
 
     
     
@@ -263,7 +293,8 @@ if __name__ == "__main__":
     parser.add_argument("--trajectory_file",type=str,required=True)
     parser.add_argument("--min_cluster_size",type=int,required=True)
     parser.add_argument("--minframe",default=1,type=int)
-    parser.add_argument("--frameinterval",default=50,type=int)
+    parser.add_argument("--frameinterval",default=1,type=int)
+    parser.add_argument("--cutoff_frames",default=2400,type=int)
     parser.add_argument('--verbose',default=False,action='store_true')
 
     args = parser.parse_args()
@@ -274,11 +305,26 @@ if __name__ == "__main__":
         print('File:',trajectory_file)
         print('Total number of frames:',len(trajectory))
 
-    get_trajectoryinfo_vs_time(trajectory,minframe,frameinterval,verbose)
-    """
-    diffusivity_file='./diffusivity_data/'+os.path.splitext(os.path.basename(trajectory_file))[0]+'.diffusivityvsclustersize_minclustersize'+str(min_cluster_size)+'.data'
-    diffusivity_data.dump(diffusivity_file)
-    """
+    cluster_sizes_allframes,mean_diffusivities_allframes,cluster_sizes_present,mean_diffusivities_allcombined_sorted_eachclustersize,std_diffusivities_allcombined_sorted_eachclustersize = get_trajectoryinfo_vs_time(trajectory,cutoff_frames,minframe,frameinterval,verbose)
+
+    diffusivity_scatterplotdata=np.array([cluster_sizes_allframes,mean_diffusivities_allframes],dtype=object)
+    diffusivity_lineplotdata=np.array([cluster_sizes_present,mean_diffusivities_allcombined_sorted_eachclustersize,std_diffusivities_allcombined_sorted_eachclustersize],dtype=object)
+
+    if(frameinterval==1):
+        diffusivity_file1='./diffusivity_data/skip1frames/'+os.path.splitext(os.path.basename(trajectory_file))[0]+'.diffusivityvsclustersize_minclustersize'+str(min_cluster_size)+'.scatterplot.data'
+        diffusivity_scatterplotdata.dump(diffusivity_file1)
+        diffusivity_file2='./diffusivity_data/skip1frames/'+os.path.splitext(os.path.basename(trajectory_file))[0]+'.diffusivityvsclustersize_minclustersize'+str(min_cluster_size)+'.lineplot.data'
+        diffusivity_lineplotdata.dump(diffusivity_file2)
+    elif(frameinterval==5):
+        diffusivity_file1='./diffusivity_data/skip5frames/'+os.path.splitext(os.path.basename(trajectory_file))[0]+'.diffusivityvsclustersize_minclustersize'+str(min_cluster_size)+'.scatterplot.data'
+        diffusivity_scatterplotdata.dump(diffusivity_file1)
+        diffusivity_file2='./diffusivity_data/skip5frames/'+os.path.splitext(os.path.basename(trajectory_file))[0]+'.diffusivityvsclustersize_minclustersize'+str(min_cluster_size)+'.lineplot.data'
+        diffusivity_lineplotdata.dump(diffusivity_file2)
+
+    
+    
+    
+    
     
     
 
