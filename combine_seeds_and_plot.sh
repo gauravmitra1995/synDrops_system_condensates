@@ -26,6 +26,8 @@ shift
 min_cluster_size=$1
 shift
 
+#cutoff_frames=2400
+
 dt=0.002
 ng=20
 koff0=0
@@ -37,5 +39,5 @@ current_dir=$(pwd)
 
 #wrapper=/scratch/projects/hockygroup/data-share/gm2535/pyColloidomer_2023/dybond/run-hoomd2.9.6.bash
 
-python -u combine_data_multipleseeds_and_plot.py --volume_fraction_ribosome $vfr --crowder_temperature $crowder_temperature --koff $koff --min_cluster_size $min_cluster_size
+python -u combine_data_multipleseeds_and_plot.py --volume_fraction_ribosome $vfr --crowder_temperature $crowder_temperature --koff $koff --min_cluster_size $min_cluster_size 
 

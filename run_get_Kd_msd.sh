@@ -30,7 +30,7 @@ submit_binding_simulation () {
 }
 
 submit_simulation () {
-    seed=1
+    seed=1  #make 3 seeds each condition
     box_length=$1
     volume_fraction_ribosome=$2
     number_rods=$3
@@ -57,12 +57,13 @@ submit_simulation () {
 }
 #for Kd
 box_length=400
-for vfc in 0;do
-    for nr in 300;do
-         for nl in 300;do
-            for koff in 0.001 0.0001;do
-		 for binding_distance in 0.8 0.9 1.0 1.5;do
-                    submit_binding_simulation $box_length $vfc $nr $nl $koff $binding_distance 0
+n_gems=0
+for vfc in 0 0.1;do
+    for nr in 200;do
+         for nl in 200;do
+            for koff in 0.001;do
+		 for binding_distance in 1.0;do
+                    submit_binding_simulation $box_length $vfc $nr $nl $koff $binding_distance $n_gems
 		 done
              done
          done

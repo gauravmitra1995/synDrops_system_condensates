@@ -1,12 +1,13 @@
 import os
 import sys
-import hoomd
+#import hoomd
 import pickle
 import numpy as np
 from gsd import hoomd as gsd
 import argparse
-import matplotlib.pyplot as plt
 import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
 import seaborn as sns
 import glob
 import json

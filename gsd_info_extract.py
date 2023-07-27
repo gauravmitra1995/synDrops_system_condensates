@@ -48,6 +48,8 @@ type_list = list(system.particles.types) # list of all particle types in the sys
 num_particles = system.particles.N # total num of particles in the system
 
 system0 = trajectory[0]
+
+"""
 print("Timestep at frame 0:", system0.configuration.step)
 system1 = trajectory[1]
 print("Timestep at frame 1:", system1.configuration.step)
@@ -57,6 +59,7 @@ systemfinalminus1=trajectory[-2]
 print("Timestep at frame before final:",systemfinalminus1.configuration.step)
 systemfinal = trajectory[-1]
 print("Timestep at final frame:",systemfinal.configuration.step)
+"""
 
 
 """
@@ -77,33 +80,4 @@ for frame in frames_list:
         #print((trajectory[int(frame)].configuration.step-trajectory[int(frame)-1].configuration.step)*time_convert)
 """
 
-
-"""
-bonds_allframes=[]
-
-A_tags_list=[i for i in range(num_particles) if system.particles.typeid[i]==0] # tags of central particles
-num_clusters=len(A_tags_list) # number of clusters
-Np=int((num_particles/num_clusters-1)/2)
-cluster_ids = np.arange(num_clusters,dtype=int)
-
-typeid_list = [list(system.particles.typeid[i : j]) for i, j in zip([None]+A_tags_list, A_tags_list+[None]) if i!=None] # [[..cluster0 typeids..],[..cluster1 typeids..],..]
-
-
-Np_list=[(len(i)-1)/2 for i in typeid_list] # list of Np's for each cluster
-terminal_typeids=[i[-1] for i in typeid_list] # type ids of terminal particles (based on last typeid in each typeid sublist in typeid_list)
-
-terminal_types=[type_list[i] for i in terminal_typeids]
-terminal_types_unindexed=[i[0] for i in terminal_types]
-
-total_clusterharmonicbonds=int(sum([i*2 for i in Np_list]))
-
-num_non_dybonds=total_clusterharmonicbonds
-
-bond_types=list(system.bonds.types)
-
-dybond_types=[i for i in system.bonds.types if ((i[0] in terminal_types_unindexed) and (i[1] in terminal_types_unindexed)) or ('-' in i) or (',') in i] # if the bond type name has '-' in it, it's a dybond (maybe use some other criteria)
-
-dybond_typeids=[system.bonds.types.index(i) for i in dybond_types]
-
-"""
 

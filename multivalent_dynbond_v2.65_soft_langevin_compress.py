@@ -7,9 +7,9 @@ import hoomd.dybond_plugin as db
 from hoomd import md
 from potentials import softrepulsion
 from run_packmol import gen_lattice_packmol
-import numba as nb
+#import numba as nb
 
-@nb.jit(nopython=True)
+#@nb.jit(nopython=True)
 def wca(epsilon, sigmas, distances):
     wca_cuts = 2**(1./6)*sigmas
     sr = sigmas/distances
@@ -17,7 +17,7 @@ def wca(epsilon, sigmas, distances):
     energy[distances>wca_cuts] = 0
     return np.sum(energy)
 
-@nb.jit(nopython=True)
+#@nb.jit(nopython=True)
 def gen_lattice_mc(number_particles,box_length,particle_type_list, diameter_list, max_iter=20000,n_attempts=3, temperature=1.1, harmonic_const=10):
     success = False
     min_position = -box_length/2.
@@ -137,6 +137,8 @@ if __name__ == "__main__":
     else:
         hoomd.context.initialize("--mode=cpu")
 
+    print("Box length: ",box_length)
+
     gsd_file = outprefix+".gsd"
     gsd_file_compress = outprefix+".compress.gsd"
 
@@ -169,6 +171,9 @@ if __name__ == "__main__":
                     'gem': diameter_gem/2.,
                     'l': radius_sticker,
     }
+
+    print("Radii of the particles:")
+    print(radius_dict)  
 
     if inputfile is None:
         volume_in_nm = (box_length)**3

@@ -1,5 +1,6 @@
 #!/bin/bash
 nsteps=100000000
+#nsteps=20000000
 nsteps_original=$nsteps
 
 submit_simulation () {
@@ -7,9 +8,11 @@ submit_simulation () {
     #number_gems=0
     number_gems=20
     gamma_scale=0.001
+
     #prev_steps=$nsteps
-    #prev_steps=200000000
-    prev_steps=0
+    prev_steps=300000000
+    #prev_steps=0
+
     box_length=$1
     volume_fraction_ribosome=$2
     volume_fraction_polysome=$3
@@ -24,7 +27,7 @@ submit_simulation () {
     ljeps=0
 
     if (( $(echo "$volume_fraction_ribosome > 0" |bc -l) ));then
-	    walltime="-t 48:00:00"
+	    walltime="-t 168:00:00"
     fi
 
     if (( $(echo "$volume_fraction_ribosome > 0.35" |bc -l) ));then
@@ -48,12 +51,17 @@ submit_simulation () {
 
     if [ -e "${input_prefix}.gsd" ];then
 	echo "Restarting from ${input_prefix}.gsd"
-        simulation_options="--gpu -i ${input_prefix}.gsd --nsteps $nsteps --koff $koff --lj_epsilon $ljeps --rod_repulsion $sphere_repulsion --sphere_repulsion $sphere_repulsion --binding_distance $binding_distance --crowder_temperature ${crowder_temperature} --dt $dt --gamma_scale $gamma_scale" #--closed_box"
+        simulation_options="--gpu -i ${input_prefix}.gsd --box_length $box_length --nsteps $nsteps --koff $koff --lj_epsilon $ljeps --rod_repulsion $sphere_repulsion --sphere_repulsion $sphere_repulsion --binding_distance $binding_distance --crowder_temperature ${crowder_temperature} --dt $dt --gamma_scale $gamma_scale" #--closed_box"
 
         sbatch $walltime --job-name=$jobname -o ${outprefix}.slurm_%j.log -o ${outprefix}.slurm_%j.log --export=outprefix=$outprefix,simulation_options="${simulation_options}"  run_simulation_greene_newhoomd.sbatch
 	#run_simulation_greene.sbatch
     else
-        simulation_options="--gpu $initial_command --nsteps $nsteps --koff $koff --lj_epsilon $ljeps --binding_distance $binding_distance --rod_repulsion $sphere_repulsion --sphere_repulsion $sphere_repulsion --crowder_temperature ${crowder_temperature} --number_rods $number_rods --number_linkers $number_linkers --volume_fraction_ribosome $vfr --volume_fraction_polysome $vfp --number_gems $number_gems --dt=$dt --gamma_scale $gamma_scale" #--closed_box"
+        simulation_options="--gpu $initial_command --box_length $box_length --nsteps $nsteps --koff $koff --lj_epsilon $ljeps --binding_distance $binding_distance --rod_repulsion $sphere_repulsion --sphere_repulsion $sphere_repulsion --crowder_temperature ${crowder_temperature} --number_rods $number_rods --number_linkers $number_linkers --volume_fraction_ribosome $vfr --volume_fraction_polysome $vfp --number_gems $number_gems --dt=$dt --gamma_scale $gamma_scale" #--closed_box
+
+	#exe=multivalent_dynbond_v2.6_getKd_setup_compress.py
+
+	#/scratch/projects/hockygroup/data-share/gm2535/pyColloidomer_2023/dybond/run-hoomd2.9.6.bash python $exe --outprefix $outprefix $initial_command --box_length $box_length --nsteps $nsteps --koff $koff --lj_epsilon $ljeps --binding_distance $binding_distance --rod_repulsion $sphere_repulsion --sphere_repulsion $sphere_repulsion --crowder_temperature ${crowder_temperature} --number_rods $number_rods --number_linkers $number_linkers --volume_fraction_ribosome $vfr --volume_fraction_polysome $vfp --number_gems $number_gems --dt=$dt --gamma_scale $gamma_scale 
+
         sbatch $walltime --job-name=$jobname -o ${outprefix}.slurm_%j.log -o ${outprefix}.slurm_%j.log --export=outprefix=$outprefix,simulation_options="${simulation_options}"  run_simulation_greene_newhoomd.sbatch
     fi
 
@@ -62,20 +70,24 @@ submit_simulation () {
 
 box_length=860
 #box_length=400
+
 #nr = 1170, nl=390 are default
 nr=1170
 nl=390
+#nr=200
+#nl=200
+
 #for vfr_vfp in 0.0_0 0.15_0 0.2_0 0.25_0 0.3_0 0.35_0 0.4_0 0.5_0;do
-#for vfr_vfp in 0.0_0;do
-for vfr_vfp in 0.4_0 0.5_0;do #0.5_0;do
+#for vfr_vfp in 0.0_0 0.1_0 0.2_0 0.3_0;do
+for vfr_vfp in 0.3_0;do
     #for koff in 0.001 0.0003 0.0001;do
-    #for koff in 0.001;do
-    for koff in 0.0001;do
+    for koff in 0.001;do
+    #for koff in 0.0001;do
         vfr=$(echo $vfr_vfp |cut -f 1 -d '_')
         vfp=$(echo $vfr_vfp |cut -f 2 -d '_')
-	for crowder_temperature in 1.0;do
+	for crowder_temperature in 2.0;do
 	#for crowder_temperature in 0.5 2.0;do
-            for seed in `seq 1 5`;do 
+            for seed in `seq 4 5`;do 
                  submit_simulation $box_length $vfr $vfp $nr $nl $koff $crowder_temperature $seed
             done
         done

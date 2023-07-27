@@ -171,7 +171,7 @@ if __name__ == "__main__":
         
         linker_shift = radius_sticker+diameter_linker/2.0
         rigid.set_param('linker',
-                        types=['l']+['s']*6,
+                        types=['l']+['s']*5,
                         diameters=[2*radius_sticker]*6,
                         positions=[ (-linker_shift,0,0), (linker_shift,0,0),
                                     (0,-linker_shift,0), (0,linker_shift,0),

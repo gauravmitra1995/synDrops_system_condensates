@@ -7,9 +7,9 @@ import hoomd.dybond_plugin as db
 from hoomd import md
 from potentials import softrepulsion
 from run_packmol import gen_lattice_packmol
-import numba as nb
+#import numba as nb
 
-@nb.jit(nopython=True)
+#@nb.jit(nopython=True)
 def wca(epsilon, sigmas, distances):
     wca_cuts = 2**(1./6)*sigmas
     sr = sigmas/distances
@@ -17,7 +17,7 @@ def wca(epsilon, sigmas, distances):
     energy[distances>wca_cuts] = 0
     return np.sum(energy)
 
-@nb.jit(nopython=True)
+#@nb.jit(nopython=True)
 def gen_lattice_mc(number_particles,box_length,particle_type_list, diameter_list, max_iter=20000,n_attempts=3, temperature=1.1, harmonic_const=10):
     success = False
     min_position = -box_length/2.
@@ -203,7 +203,7 @@ if __name__ == "__main__":
         snapshot = hoomd.data.make_snapshot(N=number_particles, box=hoomd.data.boxdim(L=full_box_length,dimensions=3), particle_types=particle_types, 
                       bond_types=['r-l'])
 
-    
+
         number_density = number_particles / volume_in_nm
         print("Generating initial configuration")
         random_lattice_positions = gen_lattice_v1(number_density,number_particles)
@@ -243,6 +243,7 @@ if __name__ == "__main__":
             else:
                 shift = 0
             rod_positions.append(rod_positions[-1]+diameter_rod/2.+shift)
+        
         center = (rod_positions[0]+rod_positions[-1])/2.
         
         rigid.set_param('rod',
