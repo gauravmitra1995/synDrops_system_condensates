@@ -6,7 +6,7 @@ import numpy as np
 from gsd import hoomd as gsd
 import argparse
 import matplotlib
-matplotlib.use('Agg')
+#matplotlib.use('svg')
 import matplotlib.pyplot as plt
 import seaborn as sns
 import glob

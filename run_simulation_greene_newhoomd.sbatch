@@ -3,8 +3,8 @@
 #SBATCH --cpus-per-task 1
 #SBATCH --tasks-per-node 1
 #SBATCH --gres=gpu:1
-#SBATCH --mem 20GB
-#SBATCH -t 24:00:00
+#SBATCH --mem 10GB
+#SBATCH -t 48:00:00
 #SBATCH --dependency=singleton
 
 if [ -z "$outprefix" ];then
@@ -21,16 +21,20 @@ echo "Running in dir: $PWD"
 outdir=$(dirname $outprefix)
 mkdir -p $outdir
 
-#exe=multivalent_dynbond_v2.6_soft_brownian.py
-exe=multivalent_dynbond_v2.65_soft_langevin_compress.py
+#Regular sim scripts
+exe=multivalent_dynbond_v2.6_soft_brownian.py   
+#exe=multivalent_dynbond_v2.65_soft_langevin_compress.py    #to run for VFR 0.4 and 0.5 (any thing above 0.35)
+
+#Kd sim scripts
+#exe=multivalent_dynbond_v2.6_getKd_setup.py
+#exe=multivalent_dynbond_v2.6_getKd_setup_compress.py
+
 full_outprefix=$(readlink -f $outprefix)
 
 #module purge
 #module --ignore-cache load python/intel/3.8.6
 #module load hoomd/cuda/openmpi/intel/2.9.3
 
-#export PYTHONPATH=/scratch/work/hockygroup/software/hoomd-v2.9.7:$PYTHONPATH
-#export PYTHONPATH=/scratch/work/hockygroup/software/hoomd-v2.9.7-dynbond/dybond_plugin:$PYTHONPATH
 #python $exe --outprefix $full_outprefix ${simulation_options} 
 
 /scratch/projects/hockygroup/data-share/gm2535/pyColloidomer_2023/dybond/run-hoomd2.9.6.bash python $exe --outprefix $full_outprefix ${simulation_options} 

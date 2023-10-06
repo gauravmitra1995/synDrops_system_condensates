@@ -6,14 +6,15 @@ def equation(t, b, k):
     return b * (1 - np.exp(-k * t))
 
 parser=argparse.ArgumentParser()
-parser.add_argument("--trajectory_file",type=str)
+parser.add_argument("--trajectory_file",type=str,required=True)
 parser.add_argument("--minframe",default=0,type=int)
 #parser.add_argument("--maxframe",default=100,type=int)
 #parser.add_argument("--dt",default=0.002,type=float)
 
 parser.add_argument("--frameinterval",default=1,type=int)
-#parser.add_argument("--vfr",default=0.0,type=float)
-parser.add_argument("--epsilon",default=10.8,type=float)
+#parser.add_argument("--vfr",default=0.0,type=float,required=True)
+parser.add_argument("--epsilon",default=10.8,type=float,required=True)
+#parser.add_argument("--koff",default=0.001,type=float,required=True)
 #parser.add_argument("--seed",default=1,type=int)
 
 args = parser.parse_args()
@@ -22,7 +23,7 @@ locals().update(vars(args))
 trajectory = gsd.open(trajectory_file,'rb') # read gsd file
 print('file:',trajectory_file)
 print('\n')
-
+print('Epsilon:',epsilon)
 
 vfr=float(os.path.basename(trajectory_file).split("_")[2].replace('vfr',''))
 print("Crowder volume fraction: ",vfr)
@@ -33,6 +34,8 @@ print("Seed: ",seed)
 dt=float(os.path.basename(trajectory_file).split("_")[13].replace('dt',''))
 print("dt: ",dt)
 
+koff=float(os.path.basename(trajectory_file).split("_")[8].replace('koff',''))
+print("koff: ",koff)
 
 num_frames=len(trajectory)
 print('Total number of frames')
@@ -106,10 +109,10 @@ plt.plot(time_allframes,bonds_fitted,marker=None,linewidth=2.5,linestyle='--',co
 plt.xlabel('Time (in seconds)')
 plt.ylabel('# Bonds')
 plt.grid(alpha=0.5)
-plt.yticks(np.arange(0,110,10))
+plt.yticks(np.arange(0,210,20))
 plt.legend(loc='lower right')
 plt.title(r'$\phi_{ribosome} = $'+str(vfr)+' ; '+r'$\varepsilon = $'+str(epsilon)+' ; '+r'$s = $'+str(seed))
 fig.tight_layout()
 plt.xticks(np.arange(0,1.55,0.3))
-plt.savefig('./final_figures/Kd_vs_crowderfrac/plot_vfr'+str(vfr)+'_epsilon'+str(epsilon)+'_seed'+str(seed)+'_bondcountvstime_withfit.svg')
+plt.savefig('./final_figures/Kd_vs_crowderfrac/plot_vfr'+str(vfr)+'_epsilon'+str(epsilon)+'_seed'+str(seed)+'_bondcountvstime_withfit.svg',bbox_inches='tight')
 plt.close()

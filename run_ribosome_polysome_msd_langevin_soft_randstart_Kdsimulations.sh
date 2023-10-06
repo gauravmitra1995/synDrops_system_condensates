@@ -1,15 +1,16 @@
 #!/bin/bash
-nsteps=100000000
+#nsteps=100000000
+nsteps=20000000
 nsteps_original=$nsteps
 
 submit_simulation () {
     koff0=0
-    #number_gems=0
-    number_gems=20
+    number_gems=0
+    #number_gems=20
     gamma_scale=0.001
 
-    prev_steps=$nsteps
-    #prev_steps=200000000
+    #prev_steps=$nsteps
+    prev_steps=10000000
     #prev_steps=0
 
     box_length=$1
@@ -25,8 +26,8 @@ submit_simulation () {
     dt=0.002
     ljeps=0
 
-    if (( $(echo "$volume_fraction_ribosome > 0.2" |bc -l) ));then
-	    walltime="-t 168:00:00"
+    if (( $(echo "$volume_fraction_ribosome > 0" |bc -l) ));then
+	    walltime="-t 48:00:00"
     fi
 
     if (( $(echo "$volume_fraction_ribosome > 0.35" |bc -l) ));then
@@ -39,8 +40,8 @@ submit_simulation () {
     otheroptions=""
     final_steps=$(($prev_steps+$nsteps))
  
-    input_prefix=prod_v2.6_newdyn_2023/l${box_length}_vfr${volume_fraction_ribosome}_vfp${volume_fraction_polysome}_Tc${crowder_temperature}/gel_l${box_length}${initial_string}_vfr${volume_fraction_ribosome}_vfp${volume_fraction_polysome}_nG${number_gems}_nR${number_rods}_nL${number_linkers}_k0${koff0}_koff${koff}_repuls${sphere_repulsion}_bd${binding_distance}_Tc${crowder_temperature}_s${seed}_dt${dt}_gs${gamma_scale}_N${prev_steps}
-    output_prefix=prod_v2.6_newdyn_2023/l${box_length}_vfr${volume_fraction_ribosome}_vfp${volume_fraction_polysome}_Tc${crowder_temperature}/gel_l${box_length}${initial_string}_vfr${volume_fraction_ribosome}_vfp${volume_fraction_polysome}_nG${number_gems}_nR${number_rods}_nL${number_linkers}_k0${koff0}_koff${koff}_repuls${sphere_repulsion}_bd${binding_distance}_Tc${crowder_temperature}_s${seed}_dt${dt}_gs${gamma_scale}
+    input_prefix=prod_v2.6_getKd_newdyn_2023/l${box_length}_vfr${volume_fraction_ribosome}_vfp${volume_fraction_polysome}_Tc${crowder_temperature}/gel_l${box_length}${initial_string}_vfr${volume_fraction_ribosome}_vfp${volume_fraction_polysome}_nG${number_gems}_nR${number_rods}_nL${number_linkers}_k0${koff0}_koff${koff}_repuls${sphere_repulsion}_bd${binding_distance}_Tc${crowder_temperature}_s${seed}_dt${dt}_gs${gamma_scale}_N${prev_steps}
+    output_prefix=prod_v2.6_getKd_newdyn_2023/l${box_length}_vfr${volume_fraction_ribosome}_vfp${volume_fraction_polysome}_Tc${crowder_temperature}/gel_l${box_length}${initial_string}_vfr${volume_fraction_ribosome}_vfp${volume_fraction_polysome}_nG${number_gems}_nR${number_rods}_nL${number_linkers}_k0${koff0}_koff${koff}_repuls${sphere_repulsion}_bd${binding_distance}_Tc${crowder_temperature}_s${seed}_dt${dt}_gs${gamma_scale}
 
     outprefix=${output_prefix}_N${final_steps}
 
@@ -67,25 +68,26 @@ submit_simulation () {
 
 }
 
-box_length=860
-#box_length=400
+#box_length=860
+box_length=400
 
 #nr = 1170, nl=390 are default
-nr=1170
-nl=390
-#nr=200
-#nl=200
+#nr=1170
+#nl=390
+nr=200
+nl=200
 
-#for vfr_vfp in 0.0_0 0.3_0 0.35_0;do
-for vfr_vfp in 0.35_0;do
-    #for koff in 0.001 0.0003 0.0001;do
-    for koff in 0.001;do
+#for vfr_vfp in 0.4_0 0.5_0;do
+for vfr_vfp in 0.5_0;do
+#for vfr_vfp in 0.0_0 0.1_0 0.2_0 0.3_0;do
+    for koff in 0.0005;do
     #for koff in 0.0001;do
+    #for koff in 0.01 0.005 0.001 0.0005 0.0001;do
         vfr=$(echo $vfr_vfp |cut -f 1 -d '_')
         vfp=$(echo $vfr_vfp |cut -f 2 -d '_')
 	for crowder_temperature in 1.0;do
-	#for crowder_temperature in 0.5 1.1 1.2 2.0;do
-            for seed in `seq 1 5`;do 
+            for seed in `seq 4 5`;do 
+            #for seed in `seq 1 5`;do
                  submit_simulation $box_length $vfr $vfp $nr $nl $koff $crowder_temperature $seed
             done
         done

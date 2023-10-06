@@ -66,18 +66,6 @@ print("Timestep at final frame:",systemfinal.configuration.step)
 time_convert=7.5e-8
 for frame in frames_list:
     system=trajectory[int(frame)]
-    if(frame==frames_list[1600]):
-        print("Frame no, simulation timestep:")
-        print(frame-2,trajectory[int(frame-2)].configuration.step)
-        print(frame-1,trajectory[int(frame-1)].configuration.step)
-        print(frame,trajectory[int(frame)].configuration.step)
-        print(frame+1,trajectory[int(frame+1)].configuration.step)
-        print("Time in seconds at frame 1599:")
-        print(trajectory[int(frame)-1].configuration.step*time_convert)
-        #print("Difference in timesteps between consecutive frames:")
-        #print(trajectory[int(frame)].configuration.step-trajectory[int(frame)-1].configuration.step)
-        #print("Difference in timesteps between consecutive frames (in units of sec):")
-        #print((trajectory[int(frame)].configuration.step-trajectory[int(frame)-1].configuration.step)*time_convert)
 """
 
 

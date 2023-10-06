@@ -32,7 +32,7 @@ if __name__ == "__main__":
     parser.add_argument("--volume_fraction_ribosome",help="Fraction of volume taken up by 30nm ribosome (default: %(default)s)",default=0,type=float,required=True)
     parser.add_argument("--koff",help="Off rate for unbinding in time units (default: %(default)s)",default=0.001,type=float,required=True)
     parser.add_argument("--min_cluster_size",help="Minimum cluster size to be considered",default=1,type=int,required=True)
-    #parser.add_argument("--cutoff_frames",help="Cut off value for the frames upto which analysis has to be done",default=2400,type=int,required=True)
+    parser.add_argument("--cutoff_frames",help="Cut off value for the frames upto which analysis has to be done",default=2400,type=int,required=True)
     
     #Parameters which were more or less fixed 
     parser.add_argument("--volume_fraction_polysome",help="Fraction of volume taken up by 100nm polysome (default: %(default)s)",default=0,type=int)
@@ -68,7 +68,7 @@ if __name__ == "__main__":
     print("Crowder temperature: ",crowder_temperature)
     print("/"*100)
 
-    ''' 
+         
     #LARGEST CLUSTER SIZE VS TIME ANALYSIS
     #For largest cluster size vs time, combine all seeds and put them individually on same plot
 
@@ -79,9 +79,8 @@ if __name__ == "__main__":
 
     fig,ax=plt.subplots(figsize=(20,15),dpi=100)
 
-    cutoff_frames=2400
 
-    for filename in sorted(glob.glob("./largestclustersizevstime_data/gel_l"+str(box_length)+"_vfr"+str(volume_fraction_ribosome)+"_vfp"+str(volume_fraction_polysome)+"_nG"+str(number_gems)+"_nR"+str(number_rods)+"_nL"+str(number_linkers)+"_k0"+str(koff0)+"_koff"+str(koff)+"_repuls"+str(sphere_repulsion)+"_bd"+str(binding_distance)+"_Tc"+str(crowder_temperature)+"_s*dt"+str(dt)+"_gs"+str(gamma_scale)+"_combined.largestclustersizevstime.data"),key=lambda x:(int(((os.path.basename(x).split("_")[12]).split(".")[0]).replace('s','')))):
+    for filename in sorted(glob.glob("./largestclustersizevstime_data/gel_l"+str(box_length)+"_vfr"+str(volume_fraction_ribosome)+"_vfp"+str(volume_fraction_polysome)+"_nG"+str(number_gems)+"_nR"+str(number_rods)+"_nL"+str(number_linkers)+"_k0"+str(koff0)+"_koff"+str(koff)+"_repuls"+str(sphere_repulsion)+"_bd"+str(binding_distance)+"_Tc"+str(crowder_temperature)+"_s*dt"+str(dt)+"_gs"+str(gamma_scale)+".allruns.largestclustersizevstime.data"),key=lambda x:(int(((os.path.basename(x).split("_")[12]).split(".")[0]).replace('s','')))):
         seed=int(((os.path.basename(filename).split("_")[12]).split(".")[0]).replace('s',''))
         print("*"*100)
         print("Seed: ",seed)
@@ -136,13 +135,16 @@ if __name__ == "__main__":
     ax.set_xlabel('Time (in sec)',fontsize=50)
     ax.set_ylim(0,1600)
     plt.xticks(np.arange(0,26.0,2.0),fontsize=40)
+    #plt.xticks(np.arange(0,9.0,1.0),fontsize=40)
     plt.yticks(np.arange(0,1600,100),fontsize=40)
     plt.grid()
     plt.title(r'$\phi_{ribosome} = $'+str(volume_fraction_ribosome)+' ; '+r'$T_{c} = $'+str(crowder_temperature)+' ; '+r'$\varepsilon = $'+str(epsilon),fontsize=50)
     ax.legend(loc='upper left',ncol=1,prop={'size': 30})
     fig.tight_layout()
-    plt.savefig('final_figures/largestclustersize_vs_time/volfracribo'+str(volume_fraction_ribosome)+'_Tc'+str(crowder_temperature)+'_eps'+str(epsilon)+'_largestclustersizevstime.svg',bbox_inches='tight')
+    plt.show()
+    #plt.savefig('final_figures/largestclustersize_vs_time/volfracribo'+str(volume_fraction_ribosome)+'_Tc'+str(crowder_temperature)+'_eps'+str(epsilon)+'_largestclustersizevstime.svg',bbox_inches='tight')
     plt.close()
+    #plt.savefig('final_figures/largestclustersize_vs_time/volfracribo'+str(volume_fraction_ribosome)+'_Tc'+str(crowder_temperature)+'_eps'+str(epsilon)+'_largestclustersizevstime.svg',bbox_inches='tight')
     
 
     
@@ -155,7 +157,7 @@ if __name__ == "__main__":
     
     fig,ax=plt.subplots(figsize=(20,15),dpi=100)
 
-    for filename in sorted(glob.glob("./averageclustersizevstime_data/gel_l"+str(box_length)+"_vfr"+str(volume_fraction_ribosome)+"_vfp"+str(volume_fraction_polysome)+"_nG"+str(number_gems)+"_nR"+str(number_rods)+"_nL"+str(number_linkers)+"_k0"+str(koff0)+"_koff"+str(koff)+"_repuls"+str(sphere_repulsion)+"_bd"+str(binding_distance)+"_Tc"+str(crowder_temperature)+"_s*dt"+str(dt)+"_gs"+str(gamma_scale)+"_combined.averageclustersizevstime_minclustersize"+str(min_cluster_size)+".data"),key=lambda x:(int(((os.path.basename(x).split("_")[12]).split(".")[0]).replace('s','')))):
+    for filename in sorted(glob.glob("./averageclustersizevstime_data/gel_l"+str(box_length)+"_vfr"+str(volume_fraction_ribosome)+"_vfp"+str(volume_fraction_polysome)+"_nG"+str(number_gems)+"_nR"+str(number_rods)+"_nL"+str(number_linkers)+"_k0"+str(koff0)+"_koff"+str(koff)+"_repuls"+str(sphere_repulsion)+"_bd"+str(binding_distance)+"_Tc"+str(crowder_temperature)+"_s*dt"+str(dt)+"_gs"+str(gamma_scale)+".allruns.averageclustersizevstime_minclustersize"+str(min_cluster_size)+".data"),key=lambda x:(int(((os.path.basename(x).split("_")[12]).split(".")[0]).replace('s','')))):
         seed=int(((os.path.basename(filename).split("_")[12]).split(".")[0]).replace('s',''))
         #print("*"*100)
         #print("Seed: ",seed)
@@ -233,11 +235,11 @@ if __name__ == "__main__":
     plt.xscale('log')
     plt.title(r'$\phi_{ribosome} = $'+str(volume_fraction_ribosome)+' ; '+r'$T_{c} = $'+str(crowder_temperature)+' ; '+r'$\varepsilon = $'+str(epsilon)+' ; '+'Min clus size = '+str(min_cluster_size),fontsize=40)
     fig.tight_layout()
-    plt.savefig('final_figures/averageclustersize_vs_time/volfracribo'+str(volume_fraction_ribosome)+'_Tc'+str(crowder_temperature)+'_eps'+str(epsilon)+'_averageclustersizevstime_minclustersize'+str(min_cluster_size)+'.svg',bbox_inches='tight')
+    plt.show()
+    #plt.savefig('final_figures/averageclustersize_vs_time/volfracribo'+str(volume_fraction_ribosome)+'_Tc'+str(crowder_temperature)+'_eps'+str(epsilon)+'_averageclustersizevstime_minclustersize'+str(min_cluster_size)+'.svg',bbox_inches='tight')
     plt.close()
-    '''
     
-    
+    sys.exit(0)
 
 
     #AVG DIFFUSIVITY VS CLUSTER SIZE ANALYSIS
@@ -254,7 +256,7 @@ if __name__ == "__main__":
 
     num_frames_analysis=[]
 
-    for filename in sorted(glob.glob("./diffusivity_data/skip1frames/gel_l"+str(box_length)+"_vfr"+str(volume_fraction_ribosome)+"_vfp"+str(volume_fraction_polysome)+"_nG"+str(number_gems)+"_nR"+str(number_rods)+"_nL"+str(number_linkers)+"_k0"+str(koff0)+"_koff"+str(koff)+"_repuls"+str(sphere_repulsion)+"_bd"+str(binding_distance)+"_Tc"+str(crowder_temperature)+"_s*dt"+str(dt)+"_gs"+str(gamma_scale)+"_combined.diffusivityvsclustersize_minclustersize"+str(min_cluster_size)+".scatterplot.data"),key=lambda x:(int(((os.path.basename(x).split("_")[12]).split(".")[0]).replace('s','')))):
+    for filename in sorted(glob.glob("./diffusivity_data/skip5frames/gel_l"+str(box_length)+"_vfr"+str(volume_fraction_ribosome)+"_vfp"+str(volume_fraction_polysome)+"_nG"+str(number_gems)+"_nR"+str(number_rods)+"_nL"+str(number_linkers)+"_k0"+str(koff0)+"_koff"+str(koff)+"_repuls"+str(sphere_repulsion)+"_bd"+str(binding_distance)+"_Tc"+str(crowder_temperature)+"_s*dt"+str(dt)+"_gs"+str(gamma_scale)+"_combined.diffusivityvsclustersize_minclustersize"+str(min_cluster_size)+".scatterplot.data"),key=lambda x:(int(((os.path.basename(x).split("_")[12]).split(".")[0]).replace('s','')))):
         seed=int(((os.path.basename(filename).split("_")[12]).split(".")[0]).replace('s',''))
         print("*"*100)
         print("Seed: ",seed)
@@ -284,7 +286,7 @@ if __name__ == "__main__":
     meandiffusivity_dict_allseeds={}
     stddiffusivity_dict_allseeds={}
 
-    for filename in sorted(glob.glob("./diffusivity_data/skip1frames/gel_l"+str(box_length)+"_vfr"+str(volume_fraction_ribosome)+"_vfp"+str(volume_fraction_polysome)+"_nG"+str(number_gems)+"_nR"+str(number_rods)+"_nL"+str(number_linkers)+"_k0"+str(koff0)+"_koff"+str(koff)+"_repuls"+str(sphere_repulsion)+"_bd"+str(binding_distance)+"_Tc"+str(crowder_temperature)+"_s*dt"+str(dt)+"_gs"+str(gamma_scale)+"_combined.diffusivityvsclustersize_minclustersize"+str(min_cluster_size)+".lineplot.data"),key=lambda x:(int(((os.path.basename(x).split("_")[12]).split(".")[0]).replace('s','')))):
+    for filename in sorted(glob.glob("./diffusivity_data/skip5frames/gel_l"+str(box_length)+"_vfr"+str(volume_fraction_ribosome)+"_vfp"+str(volume_fraction_polysome)+"_nG"+str(number_gems)+"_nR"+str(number_rods)+"_nL"+str(number_linkers)+"_k0"+str(koff0)+"_koff"+str(koff)+"_repuls"+str(sphere_repulsion)+"_bd"+str(binding_distance)+"_Tc"+str(crowder_temperature)+"_s*dt"+str(dt)+"_gs"+str(gamma_scale)+"_combined.diffusivityvsclustersize_minclustersize"+str(min_cluster_size)+".lineplot.data"),key=lambda x:(int(((os.path.basename(x).split("_")[12]).split(".")[0]).replace('s','')))):
         seed=int(((os.path.basename(filename).split("_")[12]).split(".")[0]).replace('s',''))
         #print("*"*100)
         #print("Seed: ",seed)
@@ -349,18 +351,18 @@ if __name__ == "__main__":
     for axis in ['top','bottom','left','right']:
         ax.spines[axis].set_linewidth(1)
 
-    #ax.xaxis.set_tick_params(labelbottom=False)
-    #ax.yaxis.set_tick_params(labelleft=False)
+    ax.xaxis.set_tick_params(labelbottom=False)
+    ax.yaxis.set_tick_params(labelleft=False)
 
-    ax.set_xlabel('Cluster size (#molecules)')
-    ax.set_ylabel(r'Avg. diffusivity ($\mu m^2/s$)')
-    ax.legend(loc='lower right',ncol=1,handles=custom_handles,prop={'size': 10})
-    plt.title(r'$\phi_{ribosome} = $'+str(volume_fraction_ribosome)+' ; '+r'$T_{c} = $'+str(crowder_temperature)+' ; '+r'$\varepsilon = $'+str(epsilon))
+    #ax.set_xlabel('Cluster size (#molecules)')
+    #ax.set_ylabel(r'Avg. diffusivity ($\mu m^2/s$)')
+    #ax.legend(loc='lower right',ncol=1,handles=custom_handles,prop={'size': 10})
+    #plt.title(r'$\phi_{ribosome} = $'+str(volume_fraction_ribosome)+' ; '+r'$T_{c} = $'+str(crowder_temperature)+' ; '+r'$\varepsilon = $'+str(epsilon))
 
     ax.set_xlim(0.8,1600)
     ax.set_ylim(1e-6,100)
     fig.tight_layout()
-    plt.show()
+    plt.savefig('final_figures/diffusivity_vs_clustersize/volfracribo'+str(volume_fraction_ribosome)+'_Tc'+str(crowder_temperature)+'_eps'+str(epsilon)+'_diffusivityvsclustersize_skipevery5frames.png',bbox_inches='tight')
     plt.close()
 
 
