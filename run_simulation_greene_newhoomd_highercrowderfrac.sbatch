@@ -22,10 +22,10 @@ outdir=$(dirname $outprefix)
 mkdir -p $outdir
 
 #Regular sim scripts
-exe=multivalent_dynbond_v2.6_soft_brownian.py   
+exe=multivalent_dynbond_v2.65_soft_langevin_compress.py    #to run for VFR 0.4 and 0.5 (any thing above 0.35)
 
 #Kd sim scripts
-#exe=multivalent_dynbond_v2.6_getKd_setup.py
+#exe=multivalent_dynbond_v2.6_getKd_setup_compress.py #to run for VFR 0.4 and 0.5 (any thing above 0.35)
 
 full_outprefix=$(readlink -f $outprefix)
 

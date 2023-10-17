@@ -61,11 +61,14 @@ if __name__ == "__main__":
         else:
             epsilon='infinite'
 
+    pretty_print=lambda x: np.format_float_positional(x, trim="-")
+    koff=pretty_print(koff)
 
     print("/"*100)
     print("Epsilon under consideration: ",epsilon)
     print("Volume fraction of ribosome: ",volume_fraction_ribosome)
     print("Crowder temperature: ",crowder_temperature)
+    print("koff: ",koff)
     print("/"*100)
 
          
@@ -141,13 +144,10 @@ if __name__ == "__main__":
     plt.title(r'$\phi_{ribosome} = $'+str(volume_fraction_ribosome)+' ; '+r'$T_{c} = $'+str(crowder_temperature)+' ; '+r'$\varepsilon = $'+str(epsilon),fontsize=50)
     ax.legend(loc='upper left',ncol=1,prop={'size': 30})
     fig.tight_layout()
-    plt.show()
-    #plt.savefig('final_figures/largestclustersize_vs_time/volfracribo'+str(volume_fraction_ribosome)+'_Tc'+str(crowder_temperature)+'_eps'+str(epsilon)+'_largestclustersizevstime.svg',bbox_inches='tight')
+    plt.savefig('final_figures/largestclustersize_vs_time/volfracribo'+str(volume_fraction_ribosome)+'_Tc'+str(crowder_temperature)+'_eps'+str(epsilon)+'_largestclustersizevstime.svg',bbox_inches='tight')
     plt.close()
     #plt.savefig('final_figures/largestclustersize_vs_time/volfracribo'+str(volume_fraction_ribosome)+'_Tc'+str(crowder_temperature)+'_eps'+str(epsilon)+'_largestclustersizevstime.svg',bbox_inches='tight')
-    
-
-    
+     
     #AVERAGE CLUSTER SIZE VS TIME ANALYSIS
     #For largest cluster size vs time, combine all seeds by averaging them and put the average on the plot with error bars indicating standard deviation.
 
@@ -235,8 +235,7 @@ if __name__ == "__main__":
     plt.xscale('log')
     plt.title(r'$\phi_{ribosome} = $'+str(volume_fraction_ribosome)+' ; '+r'$T_{c} = $'+str(crowder_temperature)+' ; '+r'$\varepsilon = $'+str(epsilon)+' ; '+'Min clus size = '+str(min_cluster_size),fontsize=40)
     fig.tight_layout()
-    plt.show()
-    #plt.savefig('final_figures/averageclustersize_vs_time/volfracribo'+str(volume_fraction_ribosome)+'_Tc'+str(crowder_temperature)+'_eps'+str(epsilon)+'_averageclustersizevstime_minclustersize'+str(min_cluster_size)+'.svg',bbox_inches='tight')
+    plt.savefig('final_figures/averageclustersize_vs_time/volfracribo'+str(volume_fraction_ribosome)+'_Tc'+str(crowder_temperature)+'_eps'+str(epsilon)+'_averageclustersizevstime_minclustersize'+str(min_cluster_size)+'.svg',bbox_inches='tight')
     plt.close()
     
     sys.exit(0)
