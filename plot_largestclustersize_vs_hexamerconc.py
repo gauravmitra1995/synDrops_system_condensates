@@ -23,7 +23,7 @@ if __name__ == "__main__":
     #Parameters which were varied for the conditions run here:
     parser.add_argument("--crowder_temperature",help="Temperature of crowders, relative to 1.0 (default: %(default)s)",default=1.0,type=float)
     parser.add_argument("--volume_fraction_ribosome",help="Fraction of volume taken up by 30nm ribosome (default: %(default)s)",default=0.0,type=float,required=True)
-    #parser.add_argument("--koff",help="Off rate for unbinding in time units (default: %(default)s)",default=0.001,type=float,required=True)
+    parser.add_argument("--koff",help="Off rate for unbinding in time units (default: %(default)s)",default=0.001,type=float)
     
     #Parameters which were more or less fixed 
     parser.add_argument("--volume_fraction_polysome",help="Fraction of volume taken up by 100nm polysome (default: %(default)s)",default=0,type=int)
@@ -34,8 +34,10 @@ if __name__ == "__main__":
 
     parser.add_argument("--sphere_repulsion",help="Repulsion of spheres including crowders in units of kT, for soft potential (default: %(default)s)",default=500,type=float)
     parser.add_argument('--gamma_scale',help="Friction coefficient to multiply diameter to give diffusion coeff (default: %(default))",type=float,default=0.001)
-    parser.add_argument("--number_rods",help="Number of rod proteins (default: %(default)s)",default=1170,type=int)
-    parser.add_argument("--number_linkers",help="Number of rod proteins (default: %(default)s)",default=390,type=int)
+
+    #parser.add_argument("--number_rods",help="Number of rod proteins (default: %(default)s)",default=1170,type=int)
+    #parser.add_argument("--number_linkers",help="Number of rod proteins (default: %(default)s)",default=390,type=int)
+
     parser.add_argument("--number_gems",help="Number of GEM proteins (default: %(default)s)",default=20,type=int)
 
     args = parser.parse_args()
@@ -43,11 +45,10 @@ if __name__ == "__main__":
 
     checksteps=10
     kon=1/(dt*checksteps)
- 
-    #pretty_print=lambda x: np.format_float_positional(x, trim="-")
-    #koff=pretty_print(koff)
- 
-    """
+  
+    pretty_print=lambda x: np.format_float_positional(x, trim="-")
+    koff=pretty_print(koff)
+    
     if(kon==0.0):
         epsilon=0.0
     else:
@@ -55,14 +56,12 @@ if __name__ == "__main__":
             epsilon=format(np.log(kon/koff),'.1f')
         else:
             epsilon='infinite'
-    """
-
     
     print("/"*100)
-    #print("Epsilon under consideration: ",epsilon)
+    print("Epsilon under consideration: ",epsilon)
     print("Volume fraction of ribosome: ",volume_fraction_ribosome)
     print("Crowder temperature: ",crowder_temperature)
-    #print("koff: ",koff)
+    print("koff: ",koff)
     print("/"*100)
 
          
@@ -70,32 +69,32 @@ if __name__ == "__main__":
 
     fig,ax=plt.subplots(figsize=(7,5.5),dpi=300)
 
-    epsilons=[]
+    hexamerconcentrations=[]
     medianlargestclustersizes=[]
 
-    for filename in sorted(glob.glob("./largestclustersizevstime_data/epsilonvariation/volfracribo"+str(volume_fraction_ribosome)+"_Tc"+str(crowder_temperature)+"_eps*_medianlargestclustersize.data"),key=lambda x:(float((os.path.basename(x).split("_")[2]).replace('eps','')))):
+    for filename in sorted(glob.glob("./largestclustersizevstime_data/hexamerconcvariation/volfracribo"+str(volume_fraction_ribosome)+"_nR*_nL*_Tc"+str(crowder_temperature)+"_eps"+str(epsilon)+"_medianlargestclustersize.data"),key=lambda x:(int((os.path.basename(x).split("_")[2]).replace('nL','')))):
         
         data=np.load(filename,allow_pickle=True)
-        epsilon=data[0]
-        largestclustersize=data[1]
+        hexamerconc=data[1]
+        largestclustersize=data[2]
 
-        epsilons.append(float(epsilon))
+        hexamerconcentrations.append(int(hexamerconc))
         medianlargestclustersizes.append(largestclustersize)
   
-    print(epsilons)
+    print(hexamerconcentrations)
     print(medianlargestclustersizes)
 
-    ax.plot(epsilons,medianlargestclustersizes,marker='o',linestyle='-',markersize=15.0,linewidth=5.0,color='crimson')
+    ax.plot(hexamerconcentrations,medianlargestclustersizes,marker='o',linestyle='-',markersize=15.0,linewidth=5.0,color='blue')
     ax.set_ylabel('Median largest cluster size')
     for axis in ['top','bottom','left','right']:
         ax.spines[axis].set_linewidth(2)
-    ax.set_xlabel('Binding affinity ('+r'$\varepsilon$'+') in '+r'$k_B T$')
-    ax.set_ylim(0,1700)
-    plt.xticks(np.arange(int(np.min(epsilons)),int(np.max(epsilons))+1,2))
-    plt.yticks(np.arange(0,1700,100))
-    #plt.title(r'$\phi_{ribosome} = $'+str(volume_fraction_ribosome)+' ; '+r'$T_{c} = $'+str(crowder_temperature))
+    ax.set_xlabel('Number of hexamers')
+    #ax.set_ylim(0,1700)
+    plt.xticks(np.arange(int(np.min(hexamerconcentrations)),int(np.max(hexamerconcentrations))+300,300))   #tune this properly after testing how the plot looks like
+    #plt.yticks(np.arange(0,1700,100))
+    #plt.title(r'$\phi_{ribosome} = $'+str(volume_fraction_ribosome)+' ; '+r'$T_{c} = $'+str(crowder_temperature)+' ; '+r'$\varepsilon = $'+str(epsilon))
     #plt.grid(alpha=0.4)
     fig.tight_layout()
-    plt.savefig('final_figures/largestclustersize_vs_time/epsilonvariation/volfracribo'+str(volume_fraction_ribosome)+'_Tc'+str(crowder_temperature)+'_largestclustersizevsepsilon.svg',bbox_inches='tight')
+    plt.savefig('final_figures/largestclustersize_vs_time/hexamerconcvariation/volfracribo'+str(volume_fraction_ribosome)+'_Tc'+str(crowder_temperature)+'_eps'+str(epsilon)+'_largestclustersizevshexamerconc.svg',bbox_inches='tight')
     plt.close()
    

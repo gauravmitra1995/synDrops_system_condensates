@@ -21,6 +21,8 @@ if __name__ == "__main__":
     parser.add_argument("--crowder_temperature",help="Temperature of crowders, relative to 1.0 (default: %(default)s)",default=1.0,type=float,required=True)
     parser.add_argument("--volume_fraction_ribosome",help="Fraction of volume taken up by 30nm ribosome (default: %(default)s)",default=0,type=float,required=True)
     parser.add_argument("--koff",help="Off rate for unbinding in time units (default: %(default)s)",default=0.001,type=float,required=True)
+    parser.add_argument("--number_rods",help="Number of rod proteins (default: %(default)s)",default=1170,type=int,required=True)
+    parser.add_argument("--number_linkers",help="Number of rod proteins (default: %(default)s)",default=390,type=int,required=True)
     parser.add_argument("--min_cluster_size",help="Minimum cluster size to be considered",default=1,type=int,required=True)
     parser.add_argument("--cutoff_frames",help="Cut off value for the frames upto which analysis has to be done",default=2400,type=int,required=True)
     
@@ -33,8 +35,6 @@ if __name__ == "__main__":
 
     parser.add_argument("--sphere_repulsion",help="Repulsion of spheres including crowders in units of kT, for soft potential (default: %(default)s)",default=500,type=float)
     parser.add_argument('--gamma_scale',help="Friction coefficient to multiply diameter to give diffusion coeff (default: %(default))",type=float,default=0.001)
-    parser.add_argument("--number_rods",help="Number of rod proteins (default: %(default)s)",default=1170,type=int)
-    parser.add_argument("--number_linkers",help="Number of rod proteins (default: %(default)s)",default=390,type=int)
     parser.add_argument("--number_gems",help="Number of GEM proteins (default: %(default)s)",default=20,type=int)
 
     args = parser.parse_args()
@@ -60,6 +60,8 @@ if __name__ == "__main__":
     print("Volume fraction of ribosome: ",volume_fraction_ribosome)
     print("Crowder temperature: ",crowder_temperature)
     print("koff: ",koff)
+    print("No of rods: ",number_rods)
+    print("No of linkers: ",number_linkers)
     print("/"*100)
 
          
@@ -106,8 +108,8 @@ if __name__ == "__main__":
     print(epsilon,median_max_cluster_size_final)
     
     
-    output_file='./largestclustersizevstime_data/epsilonvariation/volfracribo'+str(volume_fraction_ribosome)+'_Tc'+str(crowder_temperature)+'_eps'+str(epsilon)+'_medianlargestclustersize.data'
-    d=np.array([epsilon,median_max_cluster_size_final],dtype=object)
+    output_file='./largestclustersizevstime_data/hexamerconcvariation/volfracribo'+str(volume_fraction_ribosome)+'_nR'+str(number_rods)+'_nL'+str(number_linkers)+'_Tc'+str(crowder_temperature)+'_eps'+str(epsilon)+'_medianlargestclustersize.data'
+    d=np.array([number_rods,number_linkers,median_max_cluster_size_final],dtype=object)
     d.dump(output_file)
     
   
@@ -117,11 +119,11 @@ if __name__ == "__main__":
     ax.set_xlabel('Time (in sec)',fontsize=50)
     ax.set_ylim(0,1700)
     plt.xticks(np.arange(0,26.0,2.0),fontsize=40)
-    plt.yticks(np.arange(0,1700,100),fontsize=40)
+    #plt.yticks(np.arange(0,1700,100),fontsize=40)
     plt.grid(alpha=0.6)
-    plt.title(r'$\phi_{ribosome} = $'+str(volume_fraction_ribosome)+' ; '+r'$T_{c} = $'+str(crowder_temperature)+' ; '+r'$\varepsilon = $'+str(epsilon),fontsize=50)
+    plt.title(r'$\phi_{ribosome} = $'+str(volume_fraction_ribosome)+' ; '+r'$N_{l} = $'+str(number_linkers)+' ; '+r'$T_{c} = $'+str(crowder_temperature)+' ; '+r'$\varepsilon = $'+str(epsilon),fontsize=50)
     ax.legend(loc='upper left',ncol=1,prop={'size': 30})
     fig.tight_layout()
-    plt.savefig('final_figures/largestclustersize_vs_time/epsilonvariation/volfracribo'+str(volume_fraction_ribosome)+'_Tc'+str(crowder_temperature)+'_eps'+str(epsilon)+'_largestclustersizevstime.svg',bbox_inches='tight')
+    plt.savefig('final_figures/largestclustersize_vs_time/hexamerconcvariation/volfracribo'+str(volume_fraction_ribosome)+'_nR'+str(number_rods)+'_nL'+str(number_linkers)+'_Tc'+str(crowder_temperature)+'_eps'+str(epsilon)+'_largestclustersizevstime.svg',bbox_inches='tight')
     plt.close()
    

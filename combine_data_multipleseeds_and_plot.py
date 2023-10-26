@@ -146,7 +146,6 @@ if __name__ == "__main__":
     fig.tight_layout()
     plt.savefig('final_figures/largestclustersize_vs_time/volfracribo'+str(volume_fraction_ribosome)+'_Tc'+str(crowder_temperature)+'_eps'+str(epsilon)+'_largestclustersizevstime.svg',bbox_inches='tight')
     plt.close()
-    #plt.savefig('final_figures/largestclustersize_vs_time/volfracribo'+str(volume_fraction_ribosome)+'_Tc'+str(crowder_temperature)+'_eps'+str(epsilon)+'_largestclustersizevstime.svg',bbox_inches='tight')
      
     #AVERAGE CLUSTER SIZE VS TIME ANALYSIS
     #For largest cluster size vs time, combine all seeds by averaging them and put the average on the plot with error bars indicating standard deviation.
