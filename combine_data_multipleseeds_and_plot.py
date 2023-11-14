@@ -138,7 +138,6 @@ if __name__ == "__main__":
     ax.set_xlabel('Time (in sec)',fontsize=50)
     ax.set_ylim(0,1600)
     plt.xticks(np.arange(0,26.0,2.0),fontsize=40)
-    #plt.xticks(np.arange(0,9.0,1.0),fontsize=40)
     plt.yticks(np.arange(0,1600,100),fontsize=40)
     plt.grid()
     plt.title(r'$\phi_{ribosome} = $'+str(volume_fraction_ribosome)+' ; '+r'$T_{c} = $'+str(crowder_temperature)+' ; '+r'$\varepsilon = $'+str(epsilon),fontsize=50)

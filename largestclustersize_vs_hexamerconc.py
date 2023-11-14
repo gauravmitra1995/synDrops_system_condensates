@@ -72,6 +72,7 @@ if __name__ == "__main__":
     max_cluster_sizes_allseeds=[]
 
     max_cluster_size_final=[]
+    max_cluster_size_9seconds=[]
 
     fig,ax=plt.subplots(figsize=(20,15),dpi=100)
 
@@ -83,33 +84,43 @@ if __name__ == "__main__":
         timesteps = max_cluster_size_data[:,0]
         step_time=7.5e-2
         time=timesteps*(step_time/1e6)
-
+        
         #print("No of frames in combined gsd before truncation: ",time.shape[0])
         time=time[:cutoff_frames]
         print("No of frames in combined gsd after truncation: ",time.shape[0])
         time_allseeds.append(time)
 
         max_cluster_sizes=max_cluster_size_data[:,1].astype(int)[:cutoff_frames]
-        #print(max_cluster_sizes[-1])
-        #print(max_cluster_sizes.shape[0])
+
+        choice_of_time=9.0
+        abs_diff = np.abs(time - choice_of_time)
+
+        # Find the index of the minimum absolute difference
+        index_of_closest_value = np.argmin(abs_diff)
+        
+        print(time[index_of_closest_value],max_cluster_sizes[index_of_closest_value])
+        print(time[-1],max_cluster_sizes[-1])
 
         ax.plot(time,max_cluster_sizes,marker=None,linestyle='-',linewidth=3.0,label='s = '+str(seed))
-
+  
         max_cluster_sizes_allseeds.append(max_cluster_sizes)
         max_cluster_size_final.append(max_cluster_sizes[-1])
+        max_cluster_size_9seconds.append(max_cluster_sizes[index_of_closest_value])
+
         seedlist.append(seed) 
 
-    print(max_cluster_size_final)
 
     median_max_cluster_size_final=median(max_cluster_size_final)
+    median_max_cluster_size_9seconds=median(max_cluster_size_9seconds)
+
     #mean_max_cluster_size_final=np.mean(max_cluster_size_final,axis=0)
     #stddev_max_cluster_size_final=np.std(max_cluster_size_final,axis=0)
 
-    print(epsilon,median_max_cluster_size_final)
+    print(number_rods,number_linkers,median_max_cluster_size_final,median_max_cluster_size_9seconds)
     
     
     output_file='./largestclustersizevstime_data/hexamerconcvariation/volfracribo'+str(volume_fraction_ribosome)+'_nR'+str(number_rods)+'_nL'+str(number_linkers)+'_Tc'+str(crowder_temperature)+'_eps'+str(epsilon)+'_medianlargestclustersize.data'
-    d=np.array([number_rods,number_linkers,median_max_cluster_size_final],dtype=object)
+    d=np.array([number_rods,number_linkers,median_max_cluster_size_final,median_max_cluster_size_9seconds],dtype=object)
     d.dump(output_file)
     
   
@@ -117,13 +128,14 @@ if __name__ == "__main__":
     for axis in ['top','bottom','left','right']:
         ax.spines[axis].set_linewidth(5)
     ax.set_xlabel('Time (in sec)',fontsize=50)
-    ax.set_ylim(0,1700)
+    #ax.set_ylim(0,(number_rods+number_linkers)+100)
     plt.xticks(np.arange(0,26.0,2.0),fontsize=40)
-    #plt.yticks(np.arange(0,1700,100),fontsize=40)
+    plt.yticks(fontsize=40)
     plt.grid(alpha=0.6)
     plt.title(r'$\phi_{ribosome} = $'+str(volume_fraction_ribosome)+' ; '+r'$N_{l} = $'+str(number_linkers)+' ; '+r'$T_{c} = $'+str(crowder_temperature)+' ; '+r'$\varepsilon = $'+str(epsilon),fontsize=50)
     ax.legend(loc='upper left',ncol=1,prop={'size': 30})
     fig.tight_layout()
     plt.savefig('final_figures/largestclustersize_vs_time/hexamerconcvariation/volfracribo'+str(volume_fraction_ribosome)+'_nR'+str(number_rods)+'_nL'+str(number_linkers)+'_Tc'+str(crowder_temperature)+'_eps'+str(epsilon)+'_largestclustersizevstime.svg',bbox_inches='tight')
     plt.close()
+    
    

@@ -44,10 +44,10 @@ if __name__ == "__main__":
     locals().update(vars(args))
 
     checksteps=10
-    kon=1/(dt*checksteps)
+    kon=1.0/(dt*checksteps)
   
     pretty_print=lambda x: np.format_float_positional(x, trim="-")
-    koff=pretty_print(koff)
+    koff=float(pretty_print(koff))
     
     if(kon==0.0):
         epsilon=0.0
@@ -68,33 +68,58 @@ if __name__ == "__main__":
     #PLOT MEDIAN LARGEST CLUSTER SIZE VS EPSILON
 
     fig,ax=plt.subplots(figsize=(7,5.5),dpi=300)
-
+    rodconcentrations=[]
     hexamerconcentrations=[]
-    medianlargestclustersizes=[]
+
+    medianlargestclustersizes_final=[]
+    medianlargestclustersizes_final_normalized=[]
+
+    medianlargestclustersizes_9seconds=[]
+    medianlargestclustersizes_9seconds_normalized=[]
+
+    maxpossibleclustersizes=[]
 
     for filename in sorted(glob.glob("./largestclustersizevstime_data/hexamerconcvariation/volfracribo"+str(volume_fraction_ribosome)+"_nR*_nL*_Tc"+str(crowder_temperature)+"_eps"+str(epsilon)+"_medianlargestclustersize.data"),key=lambda x:(int((os.path.basename(x).split("_")[2]).replace('nL','')))):
         
         data=np.load(filename,allow_pickle=True)
+        rodconc=data[0]
         hexamerconc=data[1]
-        largestclustersize=data[2]
-
+        largestclustersize_final=data[2]
+        largestclustersize_9seconds=data[3]
+   
+        rodconcentrations.append(int(rodconc))
         hexamerconcentrations.append(int(hexamerconc))
-        medianlargestclustersizes.append(largestclustersize)
-  
-    print(hexamerconcentrations)
-    print(medianlargestclustersizes)
 
-    ax.plot(hexamerconcentrations,medianlargestclustersizes,marker='o',linestyle='-',markersize=15.0,linewidth=5.0,color='blue')
-    ax.set_ylabel('Median largest cluster size')
+        medianlargestclustersizes_final.append(largestclustersize_final)
+        medianlargestclustersizes_9seconds.append(largestclustersize_9seconds)
+
+        maxpossibleclustersizes.append(int(rodconc)+int(hexamerconc))
+
+        medianlargestclustersizes_final_normalized.append(float(largestclustersize_final/(int(rodconc)+int(hexamerconc))))
+        medianlargestclustersizes_9seconds_normalized.append(float(largestclustersize_9seconds/(int(rodconc)+int(hexamerconc))))
+  
+
+    print("Rods:",rodconcentrations)
+    print("Hexamers:",hexamerconcentrations)
+    print("Median largest cluster size at final time point:",medianlargestclustersizes_final)
+    print(medianlargestclustersizes_final_normalized)
+    print("Median largest cluster size at 9 seconds:",medianlargestclustersizes_9seconds)
+    print(medianlargestclustersizes_9seconds_normalized)
+
+    ax.plot(hexamerconcentrations,medianlargestclustersizes_9seconds_normalized,marker='o',linestyle='-',markersize=15.0,linewidth=5.0,color='blue')
+    ax.set_ylabel(r'${\frac{Median largest cluster size}{Max possible cluster size}}\mid_{t=9sec}$')
     for axis in ['top','bottom','left','right']:
         ax.spines[axis].set_linewidth(2)
     ax.set_xlabel('Number of hexamers')
     #ax.set_ylim(0,1700)
-    plt.xticks(np.arange(int(np.min(hexamerconcentrations)),int(np.max(hexamerconcentrations))+300,300))   #tune this properly after testing how the plot looks like
+    plt.xticks(np.arange(0,1300,200))   #tune this properly after testing how the plot looks like
     #plt.yticks(np.arange(0,1700,100))
     #plt.title(r'$\phi_{ribosome} = $'+str(volume_fraction_ribosome)+' ; '+r'$T_{c} = $'+str(crowder_temperature)+' ; '+r'$\varepsilon = $'+str(epsilon))
     #plt.grid(alpha=0.4)
     fig.tight_layout()
-    plt.savefig('final_figures/largestclustersize_vs_time/hexamerconcvariation/volfracribo'+str(volume_fraction_ribosome)+'_Tc'+str(crowder_temperature)+'_eps'+str(epsilon)+'_largestclustersizevshexamerconc.svg',bbox_inches='tight')
+
+    plt.show()
     plt.close()
+    #plt.savefig('final_figures/largestclustersize_vs_time/hexamerconcvariation/volfracribo'+str(volume_fraction_ribosome)+'_Tc'+str(crowder_temperature)+'_eps'+str(epsilon)+'_largestclustersizevshexamerconc.svg',bbox_inches='tight')
+    #plt.close()
    

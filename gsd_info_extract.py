@@ -4,7 +4,7 @@ parser=argparse.ArgumentParser()
 parser.add_argument("--trajectory_file",type=str)
 parser.add_argument("--minframe",default=0,type=int)
 #parser.add_argument("--maxframe",default=100,type=int)
-parser.add_argument("--dt",type=float)
+parser.add_argument("--dt",type=float,default=0.002)
 parser.add_argument("--frameinterval",default=1,type=int)
 args = parser.parse_args()
 locals().update(vars(args))
@@ -48,24 +48,47 @@ type_list = list(system.particles.types) # list of all particle types in the sys
 num_particles = system.particles.N # total num of particles in the system
 
 system0 = trajectory[0]
-
-"""
+print("-----------------------------------------------------------")
 print("Timestep at frame 0:", system0.configuration.step)
+print("Box:",system0.configuration.box[:3])
+print("Bond count:",system0.bonds.N)
 system1 = trajectory[1]
+print("-----------------------------------------------------------")
 print("Timestep at frame 1:", system1.configuration.step)
+print("Box:",system1.configuration.box[:3])
+print("Bond count:",system1.bonds.N)
 system2 = trajectory[2]
+print("-----------------------------------------------------------")
 print("Timestep at frame 2:", system2.configuration.step)
+print("Box:",system2.configuration.box[:3])
+print("Bond count:",system2.bonds.N)
 systemfinalminus1=trajectory[-2]
+print("-----------------------------------------------------------")
 print("Timestep at frame before final:",systemfinalminus1.configuration.step)
+print("Box:",systemfinalminus1.configuration.box[:3])
+print("Bond count:",systemfinalminus1.bonds.N)
 systemfinal = trajectory[-1]
+print("-----------------------------------------------------------")
 print("Timestep at final frame:",systemfinal.configuration.step)
-"""
+print("Box:",systemfinal.configuration.box[:3])
+print("Bond count:",systemfinal.bonds.N)
+print("-----------------------------------------------------------")
 
-
-"""
 time_convert=7.5e-8
+times=[]
+bonds_vs_time=[]
+
 for frame in frames_list:
     system=trajectory[int(frame)]
-"""
+    bonds=system.bonds.N
+    timestep=system.configuration.step
+    time=timestep*time_convert
+    times.append(time)
+    bonds_vs_time.append(bonds)
+
+plt.plot(times,bonds_vs_time,color='red')
+plt.xlabel('Time(in sec)')
+plt.ylabel('Bond count')
+plt.show()
 
 
