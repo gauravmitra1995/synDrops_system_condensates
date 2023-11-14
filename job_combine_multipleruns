@@ -10,9 +10,10 @@ box_length=860
 
 binding_distance=1.0
 
-#for vfr_vfp in 0.35_0 0.5_0;do
+#for vfr_vfp in 0.3_0 0.35_0 0.5_0;do
 for vfr_vfp in 0.0_0;do
-    for nr_nl in 468_156 936_312 1170_390 1755_585 2340_780 2925_975 3510_1170;do
+    #for nr_nl in 468_156 936_312 1755_585 2340_780 2925_975 3510_1170;do
+    for nr_nl in 5850_1950;do
        nr=$(echo $nr_nl |cut -f 1 -d '_')
        nl=$(echo $nr_nl |cut -f 2 -d '_')
         for koff in 0.001;do
