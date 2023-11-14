@@ -1,6 +1,6 @@
 #!/bin/bash
 
-for id in `seq 38626138 1 38626152`;do
+for id in `seq 40097819 1 40097833`;do
     scancel $id
 done
 

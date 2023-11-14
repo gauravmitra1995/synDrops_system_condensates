@@ -47,7 +47,6 @@ binding_distance=1.0
 minframe=1
 #cutoff_frames=2400
 frameinterval=1
-#frameinterval=5  #for diffusivity calc, skip every 5 frames
 
 current_dir=$(pwd)
 

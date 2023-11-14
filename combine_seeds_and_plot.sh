@@ -45,8 +45,10 @@ current_dir=$(pwd)
 #generate all plots with seeds combined
 #python -u combine_data_multipleseeds_and_plot.py --volume_fraction_ribosome $vfr --crowder_temperature $crowder_temperature --koff $koff --min_cluster_size $min_cluster_size --cutoff_frames $cutoff_frames
 
+
 #largestclustersize vs epsilon
 #python -u largestclustersize_vs_epsilon.py --volume_fraction_ribosome $vfr --crowder_temperature $crowder_temperature --koff $koff --min_cluster_size $min_cluster_size --cutoff_frames $cutoff_frames
+
 
 #largestclustersize vs hexamer conc
 python -u largestclustersize_vs_hexamerconc.py --volume_fraction_ribosome $vfr --crowder_temperature $crowder_temperature --number_rods $nr --number_linkers $nl --koff $koff --min_cluster_size $min_cluster_size --cutoff_frames $cutoff_frames
