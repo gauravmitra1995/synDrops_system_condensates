@@ -65,13 +65,13 @@ if __name__ == "__main__":
     koff=pretty_print(koff)
 
     print("/"*100)
-    print("Epsilon under consideration: ",epsilon)
-    print("Volume fraction of ribosome: ",volume_fraction_ribosome)
+    #print("Epsilon under consideration: ",epsilon)
+    #print("Volume fraction of ribosome: ",volume_fraction_ribosome)
     print("Crowder temperature: ",crowder_temperature)
-    print("koff: ",koff)
-    print("/"*100)
+    #print("koff: ",koff)
+    #print("/"*100)
 
-         
+    """     
     #LARGEST CLUSTER SIZE VS TIME ANALYSIS
     #For largest cluster size vs time, combine all seeds and put them individually on same plot
 
@@ -116,6 +116,8 @@ if __name__ == "__main__":
     
 
     """
+
+    """
     median_cluster_size = [median(frame) for frame in zip(*max_cluster_sizes_allseeds)]
     mean_cluster_size = [float(sum(frame)/len(frame)) for frame in zip(*max_cluster_sizes_allseeds)]
     shortest_trajectory = min(time_allseeds, key=len)
@@ -125,6 +127,8 @@ if __name__ == "__main__":
 
     #print("Median of medians frame by frame: ",median_of_medians_framebyframe)
     #print("Median of medians seed by seed: ",median_of_medians_seedbyseed)
+    """
+
     """
 
     #ax.plot(shortest_trajectory,mean_cluster_size,linestyle='dashed',linewidth=5.0,color='black',label='Mean')
@@ -145,6 +149,7 @@ if __name__ == "__main__":
     fig.tight_layout()
     plt.savefig('final_figures/largestclustersize_vs_time/volfracribo'+str(volume_fraction_ribosome)+'_Tc'+str(crowder_temperature)+'_eps'+str(epsilon)+'_largestclustersizevstime.svg',bbox_inches='tight')
     plt.close()
+    """
      
     #AVERAGE CLUSTER SIZE VS TIME ANALYSIS
     #For largest cluster size vs time, combine all seeds by averaging them and put the average on the plot with error bars indicating standard deviation.
@@ -153,7 +158,7 @@ if __name__ == "__main__":
     seedlist=[]
     average_cluster_sizes_allseeds=[]
     
-    fig,ax=plt.subplots(figsize=(20,15),dpi=100)
+    #fig,ax=plt.subplots(figsize=(20,15),dpi=100)
 
     for filename in sorted(glob.glob("./averageclustersizevstime_data/gel_l"+str(box_length)+"_vfr"+str(volume_fraction_ribosome)+"_vfp"+str(volume_fraction_polysome)+"_nG"+str(number_gems)+"_nR"+str(number_rods)+"_nL"+str(number_linkers)+"_k0"+str(koff0)+"_koff"+str(koff)+"_repuls"+str(sphere_repulsion)+"_bd"+str(binding_distance)+"_Tc"+str(crowder_temperature)+"_s*dt"+str(dt)+"_gs"+str(gamma_scale)+".allruns.averageclustersizevstime_minclustersize"+str(min_cluster_size)+".data"),key=lambda x:(int(((os.path.basename(x).split("_")[12]).split(".")[0]).replace('s','')))):
         seed=int(((os.path.basename(filename).split("_")[12]).split(".")[0]).replace('s',''))
@@ -166,23 +171,23 @@ if __name__ == "__main__":
         step_time=7.5e-2
         time=timesteps*(step_time/1e6)
 
-        print("No of frames in combined gsd before truncation: ",time.shape[0])
+        #print("No of frames in combined gsd before truncation: ",time.shape[0])
 
         time=time[:cutoff_frames]
 
-        print("No of frames in combined gsd after truncation: ",time.shape[0])
+        #print("No of frames in combined gsd after truncation: ",time.shape[0])
         time_allseeds.append(time)
 
         average_cluster_sizes=average_cluster_size_data[:,1].astype(float)[:cutoff_frames]
-        print(average_cluster_sizes)
-        print(average_cluster_sizes.shape[0])
+        #print(average_cluster_sizes)
+        #print(average_cluster_sizes.shape[0])
 
         average_cluster_sizes_allseeds.append(average_cluster_sizes)
 
         seedlist.append(seed)
   
-    print("Length of the data for the 5 seeds: ")
-    print([len(i) for i in average_cluster_sizes_allseeds])
+    #print("Length of the data for the 5 seeds: ")
+    #print([len(i) for i in average_cluster_sizes_allseeds])
 
     #for averaging make sure the seeds are of the same length (#frames)
     min_length=min([len(i) for i in average_cluster_sizes_allseeds])
@@ -208,17 +213,31 @@ if __name__ == "__main__":
     coef = np.polyfit(np.log10(time),np.log10(average_cluster_sizes_meanofallseeds),1)
     poly1d_fn = np.poly1d(coef) # poly1d_fn is now a function which takes in x and returns an estimate for y
     cluster_time_fit = [pow(10,i) for i in poly1d_fn(np.log10(time))]
-    ax.errorbar(time[::10],average_cluster_sizes_meanofallseeds[::10],yerr=average_cluster_sizes_stddevofallseeds[::10],marker=None,linestyle='-',color='blue',linewidth=5.0,ecolor='k',elinewidth=1.0,capsize=5,capthick=1.0)
-    ax.plot(time,cluster_time_fit,'--r',label=f'Total: Exponent $\\alpha$={round(coef[0], 2)}')
+    #ax.errorbar(time[::10],average_cluster_sizes_meanofallseeds[::10],yerr=average_cluster_sizes_stddevofallseeds[::10],marker=None,linestyle='-',color='blue',linewidth=5.0,ecolor='k',elinewidth=1.0,capsize=5,capthick=1.0)
+    #ax.plot(time,cluster_time_fit,'--r',label=f'Total: Exponent $\\alpha$={round(coef[0], 2)}')
 
     first_select = np.where(time < nucleation_time_guess)[0]
 
     coef = np.polyfit(np.log10(time[first_select]),np.log10(average_cluster_sizes_meanofallseeds[first_select]),1)
     poly1d_fn = np.poly1d(coef)
     cluster_time_fit = [pow(10,i) for i in poly1d_fn(np.log10(time))]
-    ax.plot(time,cluster_time_fit,'--g',label=f'First: Exponent $\\alpha$={round(coef[0], 2)}')
+
+    #print("Coef: ",coef)
+    #print("Time:")
+    #print(list(time))
+    #print("Cluster_time_fit:")
+    #print(list(cluster_time_fit))
+
+    with open('cluster_time_fit_Tc'+str(crowder_temperature)+'.txt', 'w') as fp:
+        fp.write(str(cluster_time_fit))
+    print("Done")
+    
+    #print("alpha: ",round(coef[0], 2))
+
+    #ax.plot(time,cluster_time_fit,'--g',label=f'First: Exponent $\\alpha$={round(coef[0], 2)}')
 
     #Make the plots
+    """
 
     ax.set_ylabel('Average Cluster size',fontsize=50)
     ax.set_xlabel('Time (in sec)',fontsize=50)
@@ -235,6 +254,7 @@ if __name__ == "__main__":
     fig.tight_layout()
     plt.savefig('final_figures/averageclustersize_vs_time/volfracribo'+str(volume_fraction_ribosome)+'_Tc'+str(crowder_temperature)+'_eps'+str(epsilon)+'_averageclustersizevstime_minclustersize'+str(min_cluster_size)+'.svg',bbox_inches='tight')
     plt.close()
+    """
     
     sys.exit(0)
 

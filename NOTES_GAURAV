@@ -1,0 +1,8 @@
+NOV 14 
+Running 1 out of 12 runs for vfr=0.0, highest hexamer/rod concentration.
+Running 2 out of 6 runs for vfr=0.3, varying epsilon (only 4 new values)
+Also started running 1 out of 6 runs for the other 4 epsilons. 
+
+NOV 10-13
+Ran first out of 6 runs for vfr=0.3, Tc 1.0 (eventually have to vary Tc too) varying diameter of GEMs (nr=0,nl=0) 
+I only did diameter 40, 100 and 200. 

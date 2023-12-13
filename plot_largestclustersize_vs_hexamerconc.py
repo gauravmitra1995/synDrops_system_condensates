@@ -106,20 +106,17 @@ if __name__ == "__main__":
     print("Median largest cluster size at 9 seconds:",medianlargestclustersizes_9seconds)
     print(medianlargestclustersizes_9seconds_normalized)
 
-    ax.plot(hexamerconcentrations,medianlargestclustersizes_9seconds_normalized,marker='o',linestyle='-',markersize=15.0,linewidth=5.0,color='blue')
-    ax.set_ylabel(r'${\frac{Median largest cluster size}{Max possible cluster size}}\mid_{t=9sec}$')
+    ax.plot(hexamerconcentrations,medianlargestclustersizes_9seconds_normalized,marker='o',linestyle='-',markersize=15.0,linewidth=5.0,color='purple')
+    ax.set_ylabel(r'${\frac{N_{largest}^{median}}{N_{max}}}\vert_{t=9s}$',fontsize=30)
     for axis in ['top','bottom','left','right']:
         ax.spines[axis].set_linewidth(2)
     ax.set_xlabel('Number of hexamers')
     #ax.set_ylim(0,1700)
-    plt.xticks(np.arange(0,1300,200))   #tune this properly after testing how the plot looks like
+    plt.xticks(np.arange(0,2100,300))   #tune this properly after testing how the plot looks like
     #plt.yticks(np.arange(0,1700,100))
-    #plt.title(r'$\phi_{ribosome} = $'+str(volume_fraction_ribosome)+' ; '+r'$T_{c} = $'+str(crowder_temperature)+' ; '+r'$\varepsilon = $'+str(epsilon))
+    plt.title(r'$\phi_{ribosome} = $'+str(volume_fraction_ribosome)+' ; '+r'$T_{c} = $'+str(crowder_temperature)+' ; '+r'$\varepsilon = $'+str(epsilon))
     #plt.grid(alpha=0.4)
     fig.tight_layout()
-
-    plt.show()
+    plt.savefig('final_figures/largestclustersize_vs_time/hexamerconcvariation/volfracribo'+str(volume_fraction_ribosome)+'_Tc'+str(crowder_temperature)+'_eps'+str(epsilon)+'_largestclustersizevshexamerconc_9sec.pdf',bbox_inches='tight')
     plt.close()
-    #plt.savefig('final_figures/largestclustersize_vs_time/hexamerconcvariation/volfracribo'+str(volume_fraction_ribosome)+'_Tc'+str(crowder_temperature)+'_eps'+str(epsilon)+'_largestclustersizevshexamerconc.svg',bbox_inches='tight')
-    #plt.close()
    

@@ -76,6 +76,8 @@ if __name__ == "__main__":
 
     fig,ax=plt.subplots(figsize=(20,15),dpi=100)
 
+    cutoff_frames=2400  
+
     for filename in sorted(glob.glob("./largestclustersizevstime_data/gel_l"+str(box_length)+"_vfr"+str(volume_fraction_ribosome)+"_vfp"+str(volume_fraction_polysome)+"_nG"+str(number_gems)+"_nR"+str(number_rods)+"_nL"+str(number_linkers)+"_k0"+str(koff0)+"_koff"+str(koff)+"_repuls"+str(sphere_repulsion)+"_bd"+str(binding_distance)+"_Tc"+str(crowder_temperature)+"_s*dt"+str(dt)+"_gs"+str(gamma_scale)+".allruns.largestclustersizevstime.data"),key=lambda x:(int(((os.path.basename(x).split("_")[12]).split(".")[0]).replace('s','')))):
         seed=int(((os.path.basename(filename).split("_")[12]).split(".")[0]).replace('s',''))
         print("*"*100)
@@ -85,8 +87,10 @@ if __name__ == "__main__":
         step_time=7.5e-2
         time=timesteps*(step_time/1e6)
         
-        #print("No of frames in combined gsd before truncation: ",time.shape[0])
+        print("No of frames in combined gsd before truncation: ",time.shape[0])
         time=time[:cutoff_frames]
+
+
         print("No of frames in combined gsd after truncation: ",time.shape[0])
         time_allseeds.append(time)
 
@@ -108,7 +112,7 @@ if __name__ == "__main__":
         max_cluster_size_9seconds.append(max_cluster_sizes[index_of_closest_value])
 
         seedlist.append(seed) 
-
+    
 
     median_max_cluster_size_final=median(max_cluster_size_final)
     median_max_cluster_size_9seconds=median(max_cluster_size_9seconds)
@@ -135,7 +139,8 @@ if __name__ == "__main__":
     plt.title(r'$\phi_{ribosome} = $'+str(volume_fraction_ribosome)+' ; '+r'$N_{l} = $'+str(number_linkers)+' ; '+r'$T_{c} = $'+str(crowder_temperature)+' ; '+r'$\varepsilon = $'+str(epsilon),fontsize=50)
     ax.legend(loc='upper left',ncol=1,prop={'size': 30})
     fig.tight_layout()
-    plt.savefig('final_figures/largestclustersize_vs_time/hexamerconcvariation/volfracribo'+str(volume_fraction_ribosome)+'_nR'+str(number_rods)+'_nL'+str(number_linkers)+'_Tc'+str(crowder_temperature)+'_eps'+str(epsilon)+'_largestclustersizevstime.svg',bbox_inches='tight')
-    plt.close()
+    plt.show()
+    #plt.savefig('final_figures/largestclustersize_vs_time/hexamerconcvariation/volfracribo'+str(volume_fraction_ribosome)+'_nR'+str(number_rods)+'_nL'+str(number_linkers)+'_Tc'+str(crowder_temperature)+'_eps'+str(epsilon)+'_largestclustersizevstime.svg',bbox_inches='tight')
+    #plt.close()
     
    

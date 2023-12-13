@@ -35,5 +35,11 @@ full_outprefix=$(readlink -f $outprefix)
 
 #python $exe --outprefix $full_outprefix ${simulation_options} 
 
-/scratch/projects/hockygroup/data-share/gm2535/pyColloidomer_2023/dybond/run-hoomd2.9.6.bash python $exe --outprefix $full_outprefix ${simulation_options} 
+wrapper=/scratch/projects/hockygroup/data-share/gm2535/pyColloidomer_2023/dybond/run-hoomd2.9.6.bash
+
+if [[ $host =~ ^gm ]]; then
+    wrapper=/scratch/projects/hockygroup/data-share/gm2535/pyColloidomer_2023/dybond/run-hoomd2.9.2.bash
+fi
+
+$wrapper python $exe --outprefix $full_outprefix ${simulation_options} 
 

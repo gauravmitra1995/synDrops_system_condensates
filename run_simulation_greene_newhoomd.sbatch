@@ -2,7 +2,11 @@
 #SBATCH --nodes 1
 #SBATCH --cpus-per-task 1
 #SBATCH --tasks-per-node 1
-#SBATCH --gres=gpu:1
+
+#SBATCH --gres=gpu:a100:1
+##SBATCH --gres=gpu:1
+##SBATCH --gres=gpu:mi50:1
+
 #SBATCH --mem 10GB
 #SBATCH -t 48:00:00
 #SBATCH --dependency=singleton
@@ -33,7 +37,11 @@ full_outprefix=$(readlink -f $outprefix)
 #module --ignore-cache load python/intel/3.8.6
 #module load hoomd/cuda/openmpi/intel/2.9.3
 
-#python $exe --outprefix $full_outprefix ${simulation_options} 
+wrapper=/scratch/projects/hockygroup/data-share/gm2535/pyColloidomer_2023/dybond/run-hoomd2.9.6.bash
 
-/scratch/projects/hockygroup/data-share/gm2535/pyColloidomer_2023/dybond/run-hoomd2.9.6.bash python $exe --outprefix $full_outprefix ${simulation_options} 
+if [[ $host =~ ^gm ]]; then
+    wrapper=/scratch/projects/hockygroup/data-share/gm2535/pyColloidomer_2023/dybond/run-hoomd2.9.2.bash
+fi
+
+$wrapper python $exe --outprefix $full_outprefix ${simulation_options} 
 

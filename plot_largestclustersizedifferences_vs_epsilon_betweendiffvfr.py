@@ -22,7 +22,7 @@ if __name__ == "__main__":
 
     #Parameters which were varied for the conditions run here:
     parser.add_argument("--crowder_temperature",help="Temperature of crowders, relative to 1.0 (default: %(default)s)",default=1.0,type=float)
-    parser.add_argument("--volume_fraction_ribosome",help="Fraction of volume taken up by 30nm ribosome (default: %(default)s)",default=0.0,type=float,required=True)
+    #parser.add_argument("--volume_fraction_ribosome",help="Fraction of volume taken up by 30nm ribosome (default: %(default)s)",default=0.0,type=float,required=True)
     #parser.add_argument("--koff",help="Off rate for unbinding in time units (default: %(default)s)",default=0.001,type=float,required=True)
     
     #Parameters which were more or less fixed 
@@ -60,7 +60,7 @@ if __name__ == "__main__":
     
     print("/"*100)
     #print("Epsilon under consideration: ",epsilon)
-    print("Volume fraction of ribosome: ",volume_fraction_ribosome)
+    #print("Volume fraction of ribosome: ",volume_fraction_ribosome)
     print("Crowder temperature: ",crowder_temperature)
     #print("koff: ",koff)
     print("/"*100)
@@ -71,31 +71,46 @@ if __name__ == "__main__":
     fig,ax=plt.subplots(figsize=(7,5.5),dpi=300)
 
     epsilons=[]
-    medianlargestclustersizes=[]
+    medianlargestclustersizes_dict={}
+    vfrlist=[]
 
-    for filename in sorted(glob.glob("./largestclustersizevstime_data/epsilonvariation/volfracribo"+str(volume_fraction_ribosome)+"_Tc"+str(crowder_temperature)+"_eps*_medianlargestclustersize.data"),key=lambda x:(float((os.path.basename(x).split("_")[2]).replace('eps','')))):
+    for filename in sorted(glob.glob("./largestclustersizevstime_data/epsilonvariation/volfracribo*_Tc"+str(crowder_temperature)+"_eps*_medianlargestclustersize.data"),key=lambda x:(float((os.path.basename(x).split("_")[0]).replace('volfracribo','')),float((os.path.basename(x).split("_")[2]).replace('eps','')))):
         
         data=np.load(filename,allow_pickle=True)
-        epsilon=data[0]
+        vfr=float((os.path.basename(filename).split("_")[0]).replace('volfracribo',''))
+        epsilon=float(data[0])
+        label=(vfr,epsilon)
         largestclustersize=data[1]
-
-        epsilons.append(float(epsilon))
-        medianlargestclustersizes.append(largestclustersize)
+        #print(label)   
+        if(epsilon not in epsilons):
+            epsilons.append(float(epsilon))
+        if vfr not in medianlargestclustersizes_dict:
+            medianlargestclustersizes_dict[vfr] = [largestclustersize]
+        else:
+            medianlargestclustersizes_dict[vfr].append(largestclustersize)
   
-    print(epsilons)
-    print(medianlargestclustersizes)
+    #print(epsilons)
+    #print(medianlargestclustersizes)
 
-    ax.plot(epsilons,medianlargestclustersizes,marker='o',linestyle='-',markersize=15.0,linewidth=5.0,color='blue')
-    ax.set_ylabel('Median largest cluster size')
+    print(medianlargestclustersizes_dict)
+    differences = [abs(x - y) for x, y in zip(medianlargestclustersizes_dict[0.0], medianlargestclustersizes_dict[0.3])]
+    print(differences)
+    print(epsilons)
+    
+    ax.plot(epsilons[:-1],differences[:-1],marker='o',linestyle='-',markersize=15.0,linewidth=5.0,color='k')
+    ax.set_ylabel('Difference in largest cluster size')
     for axis in ['top','bottom','left','right']:
         ax.spines[axis].set_linewidth(2)
     ax.set_xlabel('Binding affinity ('+r'$\varepsilon$'+') in '+r'$k_B T$')
-    ax.set_ylim(0,1700)
-    plt.xticks(np.arange(int(np.min(epsilons)),int(np.max(epsilons))+1,2))
-    plt.yticks(np.arange(0,1700,100))
+    ax.set_ylim(0,700)
+    plt.xticks(np.arange(int(np.min(epsilons[:-1])),int(np.max(epsilons[:-1]))+1,2))
+    plt.yticks(np.arange(0,800,100))
+    plt.axvline(epsilons[differences.index(np.max(differences))],linestyle='--',linewidth=3.0,color='g')
     #plt.title(r'$\phi_{ribosome} = $'+str(volume_fraction_ribosome)+' ; '+r'$T_{c} = $'+str(crowder_temperature))
     #plt.grid(alpha=0.4)
     fig.tight_layout()
-    plt.savefig('final_figures/largestclustersize_vs_time/epsilonvariation/volfracribo'+str(volume_fraction_ribosome)+'_Tc'+str(crowder_temperature)+'_largestclustersizevsepsilon.svg',bbox_inches='tight')
+    plt.savefig('final_figures/largestclustersize_vs_time/epsilonvariation/Tc'+str(crowder_temperature)+'_differenceinlargestclustersizevsepsilon_between2vfr.pdf',bbox_inches='tight')
     plt.close()
+    
+    
    

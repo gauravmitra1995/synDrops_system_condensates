@@ -26,15 +26,12 @@ shift
 min_cluster_size=$1
 shift
 
-#cutoff_frames=2400
-
 dt=0.002
 ng=20
 koff0=0
 gamma_scale=0.001
 sphere_repulsion=500
 binding_distance=1.0
-
 cutoff_frames=2400
 
 current_dir=$(pwd)
