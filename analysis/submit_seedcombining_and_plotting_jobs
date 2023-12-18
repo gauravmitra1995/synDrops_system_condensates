@@ -1,0 +1,28 @@
+box_length=860
+
+#nr=1170
+#nl=390
+
+for vfr_vfp in 0.0_0 0.3_0 0.35_0 0.5_0;do
+#for vfr_vfp in 0.0_0;do
+    #for nr_nl in 468_156 936_312 1755_585 2340_780 2925_975 3510_1170;do
+    #for nr_nl in 4680_1560 5850_1950;do
+    for nr_nl in 1170_390;do
+       nr=$(echo $nr_nl |cut -f 1 -d '_')
+       nl=$(echo $nr_nl |cut -f 2 -d '_')
+        for koff in 0.001;do
+        #for koff in 0.0000000007 0.0000001 0.000002 0.000015 0.0001 0.0003 0.015 0.006;do
+          vfr=$(echo $vfr_vfp |cut -f 1 -d '_')
+          vfp=$(echo $vfr_vfp |cut -f 2 -d '_')
+          for crowder_temperature in 1.0;do
+          #for crowder_temperature in 0.5 1.0 1.1 1.2 2.0;do
+             for min_cluster_size in 1 2 3;do
+             #for min_cluster_size in 1;do #for largestclustersize vs epsilon (or vs hexamer conc), do only this one!
+                bash combine_seeds_and_plot.sh $box_length $vfr $vfp $nr $nl $koff $crowder_temperature $min_cluster_size
+             done
+          done
+        done
+    done
+done
+
+
