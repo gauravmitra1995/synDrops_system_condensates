@@ -1,6 +1,6 @@
 #!/bin/bash
-#nsteps=100000000
-nsteps=50000000
+#nsteps=10000000
+nsteps=20000000
 nsteps_original=$nsteps
 
 submit_simulation () {
@@ -9,13 +9,8 @@ submit_simulation () {
     number_gems=20
     gamma_scale=0.001
 
-    #prev_steps=250000000 
-    #prev_steps=100000000
-    prev_steps=0 #restart from here now
-    #prev_steps=200000000  
-    #prev_steps=150000000
-    #prev_steps=50000000
-
+    prev_steps=0
+ 
     box_length=$1
     volume_fraction_ribosome=$2
     volume_fraction_polysome=$3
@@ -78,24 +73,49 @@ box_length=860
 #box_length=400
 
 #nr = 1170, nl=390 are default
-nr=1170
-nl=390
+#nr=1170
+#nl=390
+
+nr=5850
+nl=1950
+
+#nr=4680
+#nl=1560
+
+#nr=3510
+#nl=1170
+
+#nr=2925
+#nl=975
+
+#nr=2340
+#nl=780
+
+#nr=1755
+#nl=585
+
+#nr=936
+#nl=312
+
+#nr=468
+#nl=156
 
 #For KD runs:
 #nr=200
 #nl=200
 
-for vfr_vfp in 0.0_0 0.3_0 0.5_0;do
-    #for koff in 0.0000000007 0.0000001 0.000002 0.000015 0.0001 0.0003 0.006 0.015;do   #vary epsilon 
+#for vfr_vfp in 0.0_0 0.3_0 0.35_0;do
+for vfr_vfp in 0.0_0;do
+
+    #for koff in 0.0000000007 0.0000001 0.000002 0.000015 0.0001 0.0003 0.015 0.006;do
     for koff in 0.001;do
 
         vfr=$(echo $vfr_vfp |cut -f 1 -d '_')
         vfp=$(echo $vfr_vfp |cut -f 2 -d '_')
 
-        for crowder_temperature in 1.0;do   
-	#for crowder_temperature in 0.5 1.1 1.2 2.0;do  
+        for crowder_temperature in 1.0;do   #concentration of hexamer variation for vfr=0
 
-            for seed in `seq 1 5`;do  
+            for seed in `seq 1 5`;do 
                  submit_simulation $box_length $vfr $vfp $nr $nl $koff $crowder_temperature $seed
             done
         done

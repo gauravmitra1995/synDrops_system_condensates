@@ -77,71 +77,17 @@ box_length=400
 nr=200
 nl=200
 
-#for vfr_vfp in 0.4_0 0.5_0;do
-for vfr_vfp in 0.5_0;do
-#for vfr_vfp in 0.0_0 0.1_0 0.2_0 0.3_0;do
-    for koff in 0.0005;do
-    #for koff in 0.0001;do
-    #for koff in 0.01 0.005 0.001 0.0005 0.0001;do
+for vfr_vfp in 0.0_0 0.1_0 0.2_0 0.3_0 0.4_0 0.5_0;do
+   for koff in 0.01 0.005 0.001 0.0005 0.0001;do
         vfr=$(echo $vfr_vfp |cut -f 1 -d '_')
         vfp=$(echo $vfr_vfp |cut -f 2 -d '_')
 	for crowder_temperature in 1.0;do
-            for seed in `seq 4 5`;do 
-            #for seed in `seq 1 5`;do
+           for seed in `seq 1 5`;do
                  submit_simulation $box_length $vfr $vfp $nr $nl $koff $crowder_temperature $seed
             done
         done
     done
 done
-
-exit
-
-#vary koff
-box_length=860
-#box_length=400
-#nr = 1170, nl=390 are default
-nr=1170
-nl=390
-crowder_temperature=0.9
-#koff=0
-for vfr_vfp in 0.15_0 0.2_0 0.3_0;do
-#for vfr_vfp in 0.0_0;do
-    vfr=$(echo $vfr_vfp |cut -f 1 -d '_')
-    vfp=$(echo $vfr_vfp |cut -f 2 -d '_')
-    #for koff in 0.0000 0.0001 0.0002 0.0003 0.0004 0.0005 0.0008;do
-    for koff in 0.0003;do
-            for binding_distance in 0.9;do
-                 submit_simulation $box_length $vfr $vfp $nr $nl $koff $crowder_temperature $binding_distance
-            done
-    done
-done
-exit
-
-exit
-
-
-#small
-box_length=596.3
-#box_length=400
-#nr = 1170, nl=390 are default
-nr=390
-nl=130
-koff=0.0002
-#koff=0
-for vfr_vfp in 0.0_0 0.15_0 0.3_0;do
-    vfr=$(echo $vfr_vfp |cut -f 1 -d '_')
-    vfp=$(echo $vfr_vfp |cut -f 2 -d '_')
-	 for crowder_temperature in 0.9 1.0 1.1;do
-            for binding_distance in 0.9;do
-                 submit_simulation $box_length $vfr $vfp $nr $nl $koff $crowder_temperature $binding_distance
-            done
-        done
-done
-exit
-
-
-exit
-
 
 exit
 
