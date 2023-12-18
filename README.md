@@ -1,1 +1,0 @@
-# synDrops_system
