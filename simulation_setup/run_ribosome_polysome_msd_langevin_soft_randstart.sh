@@ -9,9 +9,9 @@ submit_simulation () {
     number_gems=20
     gamma_scale=0.001
 
-    #prev_steps=250000000 
+    #prev_steps=250000000
     #prev_steps=100000000
-    prev_steps=0 #restart from here now
+    prev_steps=0  #restart from here now
     #prev_steps=200000000  
     #prev_steps=150000000
     #prev_steps=50000000
@@ -85,9 +85,11 @@ nl=390
 #nr=200
 #nl=200
 
-for vfr_vfp in 0.0_0 0.3_0 0.5_0;do
-    #for koff in 0.0000000007 0.0000001 0.000002 0.000015 0.0001 0.0003 0.006 0.015;do   #vary epsilon 
-    for koff in 0.001;do
+#for vfr_vfp in 0.0_0 0.3_0 0.5_0;do
+for vfr_vfp in 0.3_0;do
+
+    for koff in 0.0000000007 0.0000001 0.000002 0.000015 0.0001 0.0003 0.006 0.015;do   #vary epsilon
+    #for koff in 0.001;do
 
         vfr=$(echo $vfr_vfp |cut -f 1 -d '_')
         vfp=$(echo $vfr_vfp |cut -f 2 -d '_')

@@ -55,13 +55,13 @@ current_dir=$(pwd)
 for seed in `seq 1 5`;do 
 
       #trajectory_file=/scratch/projects/hockygroup/gm2535/prod_v2.6_newdyn_2023/l${box_length}_vfr${vfr}_vfp${vfp}_Tc${crowder_temperature}/gel_l${box_length}_vfr${vfr}_vfp${vfp}_nG${ng}_nR${nr}_nL${nl}_k0${koff0}_koff${koff}_repuls${sphere_repulsion}_bd${binding_distance}_Tc${crowder_temperature}_s${seed}_dt${dt}_gs${gamma_scale}_combined.gsd
-      trajectory_file=/scratch/work/hockygroup/data-share/gm2535/liam_system/prod_v2.6_newdyn_2023/l${box_length}_vfr${vfr}_vfp${vfp}_Tc${crowder_temperature}/gel_l${box_length}_vfr${vfr}_vfp${vfp}_nG${ng}_nR${nr}_nL${nl}_k0${koff0}_koff${koff}_repuls${sphere_repulsion}_bd${binding_distance}_Tc${crowder_temperature}_s${seed}_dt${dt}_gs${gamma_scale}.allruns.gsd
+      trajectory_file=/scratch/projects/hockygroup/data-share/gm2535/liam_system/prod_v2.6_newdyn_2023/l${box_length}_vfr${vfr}_vfp${vfp}_Tc${crowder_temperature}/gel_l${box_length}_vfr${vfr}_vfp${vfp}_nG${ng}_nR${nr}_nL${nl}_k0${koff0}_koff${koff}_repuls${sphere_repulsion}_bd${binding_distance}_Tc${crowder_temperature}_s${seed}_dt${dt}_gs${gamma_scale}.allruns.gsd
 
 
       if (( $(echo "$vfr > 0.35" |bc -l) ));then
 
          #trajectory_file=/scratch/projects/hockygroup/gm2535/prod_v2.6_newdyn_2023/l${box_length}_vfr${vfr}_vfp${vfp}_Tc${crowder_temperature}/gel_l${box_length}_ls1400_vfr${vfr}_vfp${vfp}_nG${ng}_nR${nr}_nL${nl}_k0${koff0}_koff${koff}_repuls${sphere_repulsion}_bd${binding_distance}_Tc${crowder_temperature}_s${seed}_dt${dt}_gs${gamma_scale}_combined.gsd
-	 trajectory_file=/scratch/work/hockygroup/data-share/gm2535/liam_system/prod_v2.6_newdyn_2023/l${box_length}_vfr${vfr}_vfp${vfp}_Tc${crowder_temperature}/gel_l${box_length}_ls1400_vfr${vfr}_vfp${vfp}_nG${ng}_nR${nr}_nL${nl}_k0${koff0}_koff${koff}_repuls${sphere_repulsion}_bd${binding_distance}_Tc${crowder_temperature}_s${seed}_dt${dt}_gs${gamma_scale}.allruns.gsd
+	 trajectory_file=/scratch/projects/hockygroup/data-share/gm2535/liam_system/prod_v2.6_newdyn_2023/l${box_length}_vfr${vfr}_vfp${vfp}_Tc${crowder_temperature}/gel_l${box_length}_ls1400_vfr${vfr}_vfp${vfp}_nG${ng}_nR${nr}_nL${nl}_k0${koff0}_koff${koff}_repuls${sphere_repulsion}_bd${binding_distance}_Tc${crowder_temperature}_s${seed}_dt${dt}_gs${gamma_scale}.allruns.gsd
 
       fi
 
