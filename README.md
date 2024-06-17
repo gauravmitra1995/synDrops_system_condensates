@@ -1,4 +1,4 @@
-**Mesoscale molecular assembly is favored by the active, crowded cytoplasm** (SUBMITTED, 2023)
+**Mesoscale molecular assembly is favored by the active, crowded cytoplasm** (PRX Life, 2024)
 
 (Tong Shu, Gaurav Mitra, Jonathan Alberts, Matheus P. Viana, Emmanuel D. Levy, Glen M. Hocky, Liam J. Holt)
 
