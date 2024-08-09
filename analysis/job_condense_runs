@@ -1,0 +1,12 @@
+#box_length=860
+box_length=400
+
+#for vfr_vfp in 0.3_0;do
+for vfr_vfp in 0.0_0 0.1_0 0.2_0 0.3_0 0.4_0 0.5_0;do
+          vfr=$(echo $vfr_vfp |cut -f 1 -d '_')
+          vfp=$(echo $vfr_vfp |cut -f 2 -d '_')
+          for crowder_temperature in 1.0;do
+          #for crowder_temperature in 0.5 1.1 1.2 2.0;do
+            sbatch condense_gsd.sh $box_length $vfr $vfp $crowder_temperature
+          done
+done     
